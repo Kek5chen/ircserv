@@ -13,7 +13,6 @@ int main(int argc, const char** argv) {
 	std::cout << "Starting IRC Server..." << std::endl;
 	std::cout << "- Port: " << initData.get_port() << std::endl;
 	std::cout << "- Password: " << initData.get_password() << std::endl;
-	std::cout << "--- Start of Server Logs ---" << std::endl;
 
 	IRCServer server(initData.get_port(), initData.get_password());
 	register_signals(&server);
@@ -21,6 +20,7 @@ int main(int argc, const char** argv) {
 	std::cout << "Server socket bound" << std::endl;
 	server.listen();
 	std::cout << "Server listening on port " << initData.get_port() << std::endl;
+	std::cout << "--- Start of Server Logs ---" << std::endl;
 	server.loop();
 	unregister_signals();
 	return 0;

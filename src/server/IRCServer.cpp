@@ -17,7 +17,7 @@ void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["NICK"] = &IRCServer::handle_NICK;
 	m_cmd_handlers["PASS"] = &IRCServer::handle_PASS;
 	m_cmd_handlers["USER"] = &IRCServer::handle_USER;
-	m_cmd_handlers["PONG"] = &IRCServer::handle_PONG;
+	m_cmd_handlers["PING"] = &IRCServer::handle_PING;
 	m_cmd_handlers_init = true;
 }
 
@@ -182,7 +182,7 @@ void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
 	(void) client;
 }
 
-void IRCServer::handle_PONG(IRCClient* client, const std::string& cmd) {
+void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
 	const std::string response = "PONG" + cmd;
 	client->send_response(response);
 }
