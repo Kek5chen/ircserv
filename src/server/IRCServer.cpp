@@ -16,6 +16,7 @@ std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> IRCSer
 void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["NICK"] = &IRCServer::handle_NICK;
 	m_cmd_handlers["PASS"] = &IRCServer::handle_PASS;
+	m_cmd_handlers["USER"] = &IRCServer::handle_USER;
 	m_cmd_handlers["PING"] = &IRCServer::handle_PING;
 	m_cmd_handlers["JOIN"] = &IRCServer::handle_JOIN;
 	m_cmd_handlers_init = true;
@@ -173,6 +174,19 @@ void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
 	response = ":127.0.0.1 376 " + client->m_nickname + " :End of MOTD";
 	client->send_response(response);
 	client->m_is_registered = true;
+}
+
+static std::vector<std::string> parse_params(const std::string& paramstr) {
+	std::vector<std::string> params;
+	size_t last = 0;
+	size_t cur;
+	while ((cur = paramstr.find(' ', last)) != std::string::npos) {
+		params.push_back(paramstr.substr(last, cur - last));
+		last = cur + 1;
+	}
+	if (paramstr[last] == ':')
+		params.push_back(paramstr.substr(last + 1));
+	return params;
 }
 
 void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {

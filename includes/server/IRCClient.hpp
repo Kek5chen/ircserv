@@ -24,4 +24,6 @@ private:
 	std::string m_nickname;
 	std::string m_username;
 	std::string m_supplied_password;
+	std::string m_mode;
+	std::string m_real_name;
 };
