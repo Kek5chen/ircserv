@@ -46,7 +46,7 @@ void IRCClient::send_response(const std::string &str) {
 bool IRCClient::flush_response() {
 	if (m_response_buffer.empty())
 		return true;
-	std::cout << m_response_buffer << std::endl;
+	std::cout << "[OUT]" << m_response_buffer << std::endl;
 	int result = send(m_socket_fd, m_response_buffer.data(), m_response_buffer.size(), 0);
 	if (result == -1)
 		throw std::runtime_error("Error when sending response");

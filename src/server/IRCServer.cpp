@@ -107,7 +107,7 @@ bool IRCServer::receive_data(IRCClient* client, std::string* buffer) {
 		if (received == -1)
 			throw std::runtime_error("An error occurred while trying to receive the sockets message.");
 		if (!received) {
-			std::cout << "Client disconnected" << std::endl;
+			std::cout << "[INFO] Client disconnected" << std::endl;
 			return false;
 		}
 		buffer->append(preBuf);
@@ -132,7 +132,9 @@ bool IRCServer::handle(IRCClient* client) {
 
 		handler_map_type::iterator cmdIt = m_cmd_handlers.find(keyword);
 		if (cmdIt == m_cmd_handlers.end()) {
-			std::cout << keyword << " not implemented" << std::endl;
+			std::cout << "[IN] === NOT IMPLEMENTED ===" << std::endl;
+			std::cout << "[IN] " << cmd << std::endl;
+			std::cout << "[IN] ===      ====       ===" << std::endl;
 			continue;
 		}
 		if (keyword != "PASS" && !client->has_access(m_password))
@@ -158,7 +160,6 @@ void IRCServer::handle_PASS(IRCClient* client, const std::string& pass) {
 	if (pass.empty())
 		return;
 	client->m_supplied_password = pass;
-	std::cout << "Password set to " << pass << std::endl;
 	if (m_password != pass)
 		client->send_response(":127.0.0.1 464 PASS :Incorrect Password");
 }
@@ -167,7 +168,6 @@ void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
 	if (nickname.empty())
 		return;
 	client->m_nickname = nickname;
-	std::cout << "Nickname set to " << nickname << std::endl;
 	if (client->m_is_registered)
 		return;
 	std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server";
