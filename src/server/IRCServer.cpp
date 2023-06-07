@@ -137,7 +137,7 @@ bool IRCServer::handle(IRCClient* client) {
 		}
 		if (keyword != "PASS" && !client->has_access(m_password))
 			return false;
-		(this->*(cmdIt->second))(client, cmd);
+		(this->*(cmdIt->second))(client, cmd.substr(keyword.size() + 1));
 	}
 	return true;
 }
@@ -154,22 +154,16 @@ void IRCServer::poll_clients() {
 	}
 }
 
-void IRCServer::handle_PASS(IRCClient* client, const std::string& cmd) {
-	size_t pos = cmd.find(' ');
-	if (pos == std::string::npos)
-		return;
-	std::string pass = cmd.substr(pos + 1);
+void IRCServer::handle_PASS(IRCClient* client, const std::string& pass) {
 	if (pass.empty())
 		return;
 	client->m_supplied_password = pass;
 	std::cout << "Password set to " << pass << std::endl;
+	if (m_password != pass)
+		client->send_response(":127.0.0.1 464 PASS :Incorrect Password");
 }
 
-void IRCServer::handle_NICK(IRCClient* client, const std::string& cmd) {
-	size_t pos = cmd.find(' ');
-	if (pos == std::string::npos)
-		return;
-	std::string nickname = cmd.substr(pos + 1);
+void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
 	if (nickname.empty())
 		return;
 	client->m_nickname = nickname;
@@ -178,9 +172,9 @@ void IRCServer::handle_NICK(IRCClient* client, const std::string& cmd) {
 	client->send_response(response);
 }
 
-void IRCServer::handle_USER(IRCClient *client, const std::string &cmd) {
+void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
 	(void) cmd;
-	const std::string response = ":server.example.com 376 " + client->m_nickname + " :End of MOTD";
+	const std::string response = ":127.0.0.1 376 " + client->m_nickname + " :End of MOTD";
 	client->send_response(response);
 }
 
