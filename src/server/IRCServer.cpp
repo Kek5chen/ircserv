@@ -157,10 +157,8 @@ void IRCServer::poll_clients() {
 }
 
 void IRCServer::handle_PASS(IRCClient* client, const std::string& pass) {
-	if (pass.empty())
-		return;
 	client->m_supplied_password = pass;
-	if (m_password != pass)
+	if (!m_password.empty() && m_password != pass)
 		client->send_response(":127.0.0.1 464 PASS :Incorrect Password");
 }
 
