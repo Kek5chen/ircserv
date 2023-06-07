@@ -183,6 +183,6 @@ void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
 }
 
 void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
-	const std::string response = "PONG" + cmd;
+	const std::string response = "PONG " + cmd;
 	client->send_response(response);
 }
