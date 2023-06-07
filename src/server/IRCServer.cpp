@@ -171,14 +171,12 @@ void IRCServer::handle_NICK(IRCClient* client, const std::string& cmd) {
 		return;
 	client->m_nickname = nickname;
 	std::cout << "Nickname set to " << nickname << std::endl;
-	const std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server\n:server.example.com 376 \" + client->m_nickname + \" :End of MOTD";
-	std::cout << response.data() << std::endl;
-	int sent = send(client->get_socket_fd(), response.data(), response.size(), 0);
-	if (sent == -1)
-		throw std::runtime_error("Error when sending response");
+	const std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server";
+	client->send_response(response);
 }
 
 void IRCServer::handle_USER(IRCClient *client, const std::string &cmd) {
 	(void) cmd;
-	(void) client;
+	const std::string response = ":server.example.com 376 " + client->m_nickname + " :End of MOTD";
+	client->send_response(response);
 }

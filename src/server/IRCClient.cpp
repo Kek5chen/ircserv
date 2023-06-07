@@ -1,5 +1,7 @@
 #include <csignal>
 #include <stdexcept>
+#include <sys/socket.h>
+#include <iostream>
 #include "server/IRCClient.hpp"
 
 IRCClient::IRCClient(int socket_id) : m_is_open(false), m_pfd(),
@@ -23,6 +25,7 @@ int IRCClient::get_socket_fd() {
 }
 
 short IRCClient::poll() {
+	this->flush_response();
 	int changed = ::poll(&m_pfd, 1, 0);
 	if (changed == -1)
 		throw std::runtime_error("An error occurred while trying to handle a client");
@@ -33,4 +36,20 @@ short IRCClient::poll() {
 
 bool IRCClient::has_access(const std::string &pass) {
 	return pass.empty() || pass == m_supplied_password;
+}
+
+void IRCClient::send_response(const std::string &str) {
+	m_response_buffer += str;
+	m_response_buffer += '\n';
+}
+
+bool IRCClient::flush_response() {
+	if (m_response_buffer.empty())
+		return true;
+	std::cout << m_response_buffer << std::endl;
+	int result = send(m_socket_fd, m_response_buffer.data(), m_response_buffer.size(), 0);
+	if (result == -1)
+		throw std::runtime_error("Error when sending response");
+	m_response_buffer.clear();
+	return (size_t)result == m_response_buffer.size();
 }
