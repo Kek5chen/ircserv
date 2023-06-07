@@ -16,6 +16,13 @@ bool IRCChannelManager::join(const std::string& channelName, IRCClient* client) 
 	return this->get_or_create(channelName)->join(client);
 }
 
+bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) {
+	IRCChannel* channel = this->get(channelName);
+	if (!channel)
+		return false;
+	return channel->part(client);
+}
+
 void IRCChannelManager::send(const std::string& channelName, const std::string& message) {
 	IRCChannel* channel = this->get(channelName);
 	if (!channel)

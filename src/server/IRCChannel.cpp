@@ -10,6 +10,13 @@ bool IRCChannel::join(IRCClient *client) {
 	return true;
 }
 
+bool IRCChannel::part(IRCClient *client) {
+	if (std::find(m_members.begin(), m_members.end(), client) == m_members.end())
+		return false;
+	m_members.erase(std::remove(m_members.begin(), m_members.end(), client), m_members.end());
+	return true;
+}
+
 void IRCChannel::send(const std::string &message) {
 	for (size_t i = 0; i < m_members.size(); i++)
 		m_members[i]->send_response(message);

@@ -31,6 +31,7 @@ private:
 	void handle_USER(IRCClient* client, const std::string& cmd);
 	void handle_PING(IRCClient* client, const std::string& cmd);
 	void handle_JOIN(IRCClient* client, const std::string& cmd);
+	void handle_PART(IRCClient* client, const std::string& cmd);
 	void handle_PRIVMSG(IRCClient* client, const std::string& cmd);
 
 	static void init_cmd_handlers();
