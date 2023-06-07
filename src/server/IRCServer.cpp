@@ -76,27 +76,25 @@ void IRCServer::accept_new_clients() {
 	}
 }
 
-void IRCServer::poll_clients() {
-	std::vector<struct pollfd> pollfds;
-	static char buf[10000];
-
-	for (size_t i = 0; i < m_clients.size(); i++) {
-		struct pollfd pfd;
-		pfd.fd = m_clients[i]->get_socket_fd();
-		pfd.events = POLLIN;
-		pollfds.push_back(pfd);
-	}
-	int changed = poll(pollfds.data(), pollfds.size(), 0);
-	if (changed == 0)
+void IRCServer::handle(IRCClient* client) {
+	static char preBuf[MSG_BUFFER_SIZE];
+	std::string buf;
+	int received;
+	short revents = client->poll();
+	if (!revents)
 		return;
-	if (changed == -1)
-		throw std::runtime_error("An error occurred while trying to poll the client data.");
 
-	for (size_t i = 0; i < pollfds.size(); i++) {
-		if (pollfds[i].revents == POLLIN) {
-			int amt = recv(pollfds[i].fd, buf, 10000, 0);
-			if (amt)
-				std::cout << "... " << buf << std::endl;
-		}
+	do {
+		received = recv(client->get_socket_fd(), preBuf, MSG_BUFFER_SIZE, 0);
+		if (received == -1)
+			throw std::runtime_error("An error occurred while trying to receive the sockets message.");
+		buf += preBuf;
+	} while (received == MSG_BUFFER_SIZE);
+	std::cout << "..." << buf << std::endl;
+}
+
+void IRCServer::poll_clients() {
+	for (size_t i = 0; i < m_clients.size(); i++) {
+		this->handle(m_clients[i]);
 	}
 }
