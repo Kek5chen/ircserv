@@ -195,8 +195,12 @@ static std::vector<std::string> parse_params(const std::string& paramstr) {
 }
 
 void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
-	(void) cmd;
-	(void) client;
+	std::vector<std::string> params = parse_params(cmd);
+	if (params.size() != 4)
+		return;
+	client->m_username = params[0];
+	client->m_mode = params[1];
+	client->m_real_name = params[3];
 }
 
 void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
