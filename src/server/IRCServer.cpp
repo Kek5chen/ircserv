@@ -16,8 +16,8 @@ std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> IRCSer
 void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["NICK"] = &IRCServer::handle_NICK;
 	m_cmd_handlers["PASS"] = &IRCServer::handle_PASS;
-	m_cmd_handlers["USER"] = &IRCServer::handle_USER;
 	m_cmd_handlers["PING"] = &IRCServer::handle_PING;
+	m_cmd_handlers["JOIN"] = &IRCServer::handle_JOIN;
 	m_cmd_handlers_init = true;
 }
 
@@ -183,4 +183,11 @@ void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
 void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
 	const std::string response = "PONG " + cmd;
 	client->send_response(response);
+}
+
+void IRCServer::handle_JOIN(IRCClient* client, const std::string& channel) {
+	if (channel.empty())
+		return;
+	m_channel_manager.join(channel, client);
+	m_channel_manager.send(channel, ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 JOIN :#" + channel); // TODO: Get Client Hostname
 }

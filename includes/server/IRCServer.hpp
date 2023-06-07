@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "IRCClient.hpp"
+#include "IRCChannelManager.hpp"
 
 #define MSG_BUFFER_SIZE 128
 
@@ -29,6 +30,7 @@ private:
 	void handle_NICK(IRCClient* client, const std::string& cmd);
 	void handle_USER(IRCClient* client, const std::string& cmd);
 	void handle_PING(IRCClient* client, const std::string& cmd);
+	void handle_JOIN(IRCClient* client, const std::string& cmd);
 
 	static void init_cmd_handlers();
 
@@ -40,6 +42,7 @@ private:
 	bool m_should_stop;
 
 	std::vector<IRCClient*> m_clients;
+	IRCChannelManager m_channel_manager;
 
 	static handler_map_type m_cmd_handlers;
 	static bool m_cmd_handlers_init;
