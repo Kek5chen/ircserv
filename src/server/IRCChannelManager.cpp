@@ -22,3 +22,10 @@ void IRCChannelManager::send(const std::string& channelName, const std::string& 
 		return;
 	channel->send(message);
 }
+
+void IRCChannelManager::send(IRCClient* sender, const std::string& channelName, const std::string& message) {
+	IRCChannel* channel = this->get(channelName);
+	if (!channel)
+		return;
+	channel->send(sender, message);
+}

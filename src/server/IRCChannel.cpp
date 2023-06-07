@@ -14,3 +14,9 @@ void IRCChannel::send(const std::string &message) {
 	for (size_t i = 0; i < m_members.size(); i++)
 		m_members[i]->send_response(message);
 }
+
+void IRCChannel::send(IRCClient* sender, const std::string &message) {
+	for (size_t i = 0; i < m_members.size(); i++)
+		if (m_members[i] != sender)
+			m_members[i]->send_response(message);
+}

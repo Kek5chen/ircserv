@@ -19,6 +19,7 @@ void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["USER"] = &IRCServer::handle_USER;
 	m_cmd_handlers["PING"] = &IRCServer::handle_PING;
 	m_cmd_handlers["JOIN"] = &IRCServer::handle_JOIN;
+	m_cmd_handlers["PRIVMSG"] = &IRCServer::handle_PRIVMSG;
 	m_cmd_handlers_init = true;
 }
 
@@ -208,4 +209,11 @@ void IRCServer::handle_JOIN(IRCClient* client, const std::string& channel) {
 		return;
 	m_channel_manager.join(channel, client);
 	m_channel_manager.send(channel, ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 JOIN :#" + channel); // TODO: Get Client Hostname
+}
+
+void IRCServer::handle_PRIVMSG(IRCClient* client, const std::string& cmd) {
+	std::string channel = cmd.substr(0, cmd.find(' '));
+	std::string message = cmd.substr(cmd.find(':') + 1);
+	std::string response = ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 PRIVMSG " + channel + " :" + message;
+	m_channel_manager.send(client, channel.substr(1), response);
 }
