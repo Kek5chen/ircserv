@@ -2,7 +2,8 @@
 #include <stdexcept>
 #include "server/IRCClient.hpp"
 
-IRCClient::IRCClient(int socket_id) : m_is_open(false) {
+IRCClient::IRCClient(int socket_id) : m_is_open(false), m_pfd(),
+	m_nickname(), m_supplied_password() {
 	m_socket_fd = socket_id;
 	m_is_open = m_socket_fd >= 0;
 	m_pfd.events = POLLIN | POLLOUT;
@@ -28,4 +29,8 @@ short IRCClient::poll() {
 	if (!changed)
 		return 0;
 	return m_pfd.revents;
+}
+
+bool IRCClient::has_access(const std::string &pass) {
+	return pass.empty() || pass == m_supplied_password;
 }
