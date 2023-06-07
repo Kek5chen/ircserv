@@ -28,11 +28,7 @@ IRCServer::IRCServer(unsigned short port, const std::string& password)
 }
 
 IRCServer::~IRCServer() {
-	for (size_t i = 0; i < m_clients.size(); i++)
-		delete m_clients[i];
-	m_clients.clear();
-	if (m_socket_fd > 0)
-		close(m_socket_fd);
+	this->stop();
 }
 
 void IRCServer::bind() {
@@ -65,6 +61,19 @@ void IRCServer::loop() {
 		this->accept_new_clients();
 		this->poll_clients();
 	}
+}
+
+void IRCServer::stop() {
+	for (size_t i = 0; i < m_clients.size(); i++)
+		delete m_clients[i];
+	m_clients.clear();
+	if (!m_should_stop && (!m_is_bound || !m_is_listening))
+		return;
+	m_should_stop = true;
+	close(m_socket_fd);
+	m_is_listening = false;
+	m_is_bound = false;
+	m_socket_fd = 0;
 }
 
 void IRCServer::accept_new_clients() {

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "setup/InitData.hpp"
 #include "server/IRCServer.hpp"
+#include "setup/SignalHandlers.hpp"
 
 int main(int argc, const char** argv) {
 	InitData initData(argc, argv);
@@ -14,10 +15,12 @@ int main(int argc, const char** argv) {
 	std::cout << "- Password: " << initData.get_password() << std::endl;
 
 	IRCServer server(initData.get_port(), initData.get_password());
+	register_signals(&server);
 	server.bind();
 	std::cout << "Server socket bound" << std::endl;
 	server.listen();
 	std::cout << "Server listening on port " << initData.get_port() << std::endl;
 	server.loop();
+	unregister_signals();
 	return 0;
 }
