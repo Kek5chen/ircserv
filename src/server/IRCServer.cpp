@@ -38,6 +38,10 @@ void IRCServer::bind() {
 	if (m_socket_fd < 0)
 		throw std::runtime_error("Socket creation failed");
 
+	static const int state = 1;
+	if (setsockopt(m_socket_fd, SOL_SOCKET, SO_REUSEADDR, &state, sizeof(state)) < 0)
+		throw std::runtime_error("Could not set socket options");
+
 	sockaddr_in socketAddr = {};
 	socketAddr.sin_family = AF_INET;
 	socketAddr.sin_port = htons(m_port);
