@@ -28,6 +28,7 @@ private:
 	void handle_PASS(IRCClient* client, const std::string& cmd);
 	void handle_NICK(IRCClient* client, const std::string& cmd);
 	void handle_USER(IRCClient* client, const std::string& cmd);
+	void handle_PONG(IRCClient* client, const std::string& cmd);
 
 	static void init_cmd_handlers();
 
