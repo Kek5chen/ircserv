@@ -4,8 +4,8 @@
 #include <iostream>
 #include "server/IRCClient.hpp"
 
-IRCClient::IRCClient(int socket_id) : m_is_open(false), m_pfd(),
-	m_nickname(), m_supplied_password() {
+IRCClient::IRCClient(int socket_id) : m_is_open(false), m_pfd(), m_is_registered(false),
+	m_nickname(), m_username(), m_supplied_password() {
 	m_socket_fd = socket_id;
 	m_is_open = m_socket_fd >= 0;
 	m_pfd.events = POLLIN | POLLOUT;

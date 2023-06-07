@@ -168,14 +168,18 @@ void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
 		return;
 	client->m_nickname = nickname;
 	std::cout << "Nickname set to " << nickname << std::endl;
-	const std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server";
+	if (client->m_is_registered)
+		return;
+	std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server";
 	client->send_response(response);
+	response = ":127.0.0.1 376 " + client->m_nickname + " :End of MOTD";
+	client->send_response(response);
+	client->m_is_registered = true;
 }
 
 void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
 	(void) cmd;
-	const std::string response = ":127.0.0.1 376 " + client->m_nickname + " :End of MOTD";
-	client->send_response(response);
+	(void) client;
 }
 
 void IRCServer::handle_PONG(IRCClient* client, const std::string& cmd) {

@@ -20,6 +20,8 @@ private:
 	struct pollfd m_pfd;
 	std::string m_response_buffer;
 
+	bool m_is_registered;
 	std::string m_nickname;
+	std::string m_username;
 	std::string m_supplied_password;
 };
