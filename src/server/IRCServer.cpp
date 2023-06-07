@@ -144,8 +144,10 @@ bool IRCServer::handle(IRCClient* client) {
 
 void IRCServer::poll_clients() {
 	for (size_t i = 0; i < m_clients.size(); i++) {
-		if (this->handle(m_clients[i]))
+		bool keepConnection = this->handle(m_clients[i]);
+		if (keepConnection)
 			continue;
+		m_clients[i]->flush_response();
 		delete m_clients[i];
 		m_clients.erase(std::remove(m_clients.begin(), m_clients.end(), m_clients[i]), m_clients.end());
 		i--;
