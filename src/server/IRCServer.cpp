@@ -212,17 +212,11 @@ void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
 void IRCServer::handle_JOIN(IRCClient* client, const std::string& channel) {
 	if (channel.empty())
 		return;
-	m_channel_manager.join(channel, client);
-	m_channel_manager.send(channel, ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 JOIN :#" + channel); // TODO: Get Client Hostname
-	std::string userList = ":127.0.0.1 353 " + client->m_nickname + " = #" + channel + " :";
-	for (size_t i = 0; i < m_clients.size(); i++) {
-		userList += m_clients[i]->m_nickname;
-		if (i != m_clients.size() - 1)
-			userList += ' ';
-	}
-	client->send_response(userList);
-	const std::string userListEnd = ":127.0.0.1 366 " + client->m_nickname + " #" + channel + " :End of NAMES list";
-	client->send_response(userListEnd);
+
+	std::string channelName = channel.substr(channel[0] == '#');
+	if (channelName.empty())
+		return;
+	m_channel_manager.join(channelName, client);
 }
 
 void IRCServer::handle_PRIVMSG(IRCClient* client, const std::string& cmd) {

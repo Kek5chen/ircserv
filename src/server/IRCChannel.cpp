@@ -3,10 +3,20 @@
 
 IRCChannel::IRCChannel(std::string name) : m_name(name) {}
 
-bool IRCChannel::join(IRCClient *client) {
+bool IRCChannel::join(IRCClient* client) {
 	if (std::find(m_members.begin(), m_members.end(), client) != m_members.end())
 		return false;
 	m_members.push_back(client);
+	this->send(":" + client->get_nickname() + "!" + client->get_username() + "@127.0.0.1 JOIN :#" + m_name); // TODO: Get Client Hostname
+	std::string userList = ":127.0.0.1 353 " + client->get_nickname() + " = #" + m_name + " :";
+	for (size_t i = 0; i < m_members.size(); i++) {
+		userList += m_members[i]->get_nickname();
+		if (i != m_members.size() - 1)
+			userList += ' ';
+	}
+	client->send_response(userList);
+	const std::string userListEnd = ":127.0.0.1 366 " + client->get_nickname() + " #" + m_name + " :End of NAMES list";
+	client->send_response(userListEnd);
 	return true;
 }
 
