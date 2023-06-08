@@ -234,6 +234,5 @@ void IRCServer::handle_PRIVMSG(IRCClient* client, const std::string& cmd) {
 
 void IRCServer::handle_PART(IRCClient* client, const std::string& cmd) {
 	std::string channel = cmd.substr(1, cmd.find(' ') - 1);
-	m_channel_manager.send(channel, ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 PART #" + channel); // TODO: Get Client Hostname
 	m_channel_manager.part(channel, client);
 }

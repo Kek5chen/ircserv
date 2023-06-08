@@ -14,6 +14,9 @@ public:
 	short poll();
 	void send_response(const std::string& str);
 	bool flush_response();
+
+	const std::string& get_nickname();
+	const std::string& get_username();
 private:
 	int m_socket_fd;
 	bool m_is_open;

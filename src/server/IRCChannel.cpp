@@ -10,9 +10,10 @@ bool IRCChannel::join(IRCClient *client) {
 	return true;
 }
 
-bool IRCChannel::part(IRCClient *client) {
+bool IRCChannel::part(IRCClient* client) {
 	if (std::find(m_members.begin(), m_members.end(), client) == m_members.end())
 		return false;
+	this->send(":" + client->get_nickname() + "!" + client->get_username() + "@127.0.0.1 PART #" + m_name); // TODO: Get Client Hostname
 	m_members.erase(std::remove(m_members.begin(), m_members.end(), client), m_members.end());
 	return true;
 }

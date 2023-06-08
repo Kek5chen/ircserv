@@ -53,3 +53,11 @@ bool IRCClient::flush_response() {
 	m_response_buffer.clear();
 	return (size_t)result == m_response_buffer.size();
 }
+
+const std::string& IRCClient::get_nickname() {
+	return m_nickname;
+}
+
+const std::string& IRCClient::get_username() {
+	return m_username;
+}
