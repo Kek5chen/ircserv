@@ -2,7 +2,7 @@
 #include <map>
 #include "server/IRCChannel.hpp"
 
-IRCChannel::IRCChannel(std::string name) : m_name(name) {}
+IRCChannel::IRCChannel(std::string name, IRCClient* creator) : m_name(name), m_creator(creator) {}
 
 bool IRCChannel::join(IRCClient* client) {
 	if (std::find(m_members.begin(), m_members.end(), client) != m_members.end())
@@ -11,6 +11,8 @@ bool IRCChannel::join(IRCClient* client) {
 	this->send(":" + client->get_nickname() + "!" + client->get_username() + "@127.0.0.1 JOIN :#" + m_name); // TODO: Get Client Hostname
 	std::string userList = ":127.0.0.1 353 " + client->get_nickname() + " = #" + m_name + " :";
 	for (size_t i = 0; i < m_members.size(); i++) {
+		if (this->is_operator(m_members[i]))
+			userList += '@';
 		userList += m_members[i]->get_nickname();
 		if (i != m_members.size() - 1)
 			userList += ' ';
@@ -46,4 +48,8 @@ bool IRCChannel::has_joined(IRCClient* client) {
 		if (m_members[i] == client)
 			return true;
 	return false;
+}
+
+bool IRCChannel::is_operator(IRCClient* client) {
+	return m_creator == client;
 }

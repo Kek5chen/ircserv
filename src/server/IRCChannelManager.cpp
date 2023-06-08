@@ -6,14 +6,16 @@ IRCChannel* IRCChannelManager::get(const std::string& channelName) {
 	return m_channels[channelName];
 }
 
-IRCChannel* IRCChannelManager::get_or_create(const std::string& channelName) {
-	if (m_channels.find(channelName) == m_channels.end())
-		m_channels[channelName] = new IRCChannel(channelName);
+IRCChannel* IRCChannelManager::get_or_create(const std::string& channelName, IRCClient* requester) {
+	if (m_channels.find(channelName) == m_channels.end()) {
+		IRCChannel* channel = new IRCChannel(channelName, requester);
+		m_channels[channelName] = channel;
+	}
 	return m_channels[channelName];
 }
 
 bool IRCChannelManager::join(const std::string& channelName, IRCClient* client) {
-	IRCChannel* channel = this->get_or_create(channelName);
+	IRCChannel* channel = this->get_or_create(channelName, client);
 	if (channel->has_joined(client))
 		return false;
 	return channel->join(client);
