@@ -117,6 +117,7 @@ bool IRCServer::receive_data(IRCClient* client, std::string* buffer) {
 		std::cout << "[INFO] Client disconnected" << std::endl;
 		return false;
 	}
+	buffer->append(preBuf);
 	return true;
 }
 
@@ -132,8 +133,10 @@ bool IRCServer::handle(IRCClient* client) {
 		if (end == std::string::npos)
 			break;
 		std::string cmd = buf.substr(0, end);
-		std::string keyword = buf.substr(0, cmd.find(' '));
 		buf = buf.substr(end + 2);
+		if (cmd.empty())
+			continue;
+		std::string keyword = cmd.substr(0, cmd.find(' '));
 
 		handler_map_type::iterator cmdIt = m_cmd_handlers.find(keyword);
 		if (cmdIt == m_cmd_handlers.end()) {
