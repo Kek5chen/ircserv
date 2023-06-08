@@ -6,7 +6,7 @@
 #include "IRCClient.hpp"
 #include "IRCChannelManager.hpp"
 
-#define MSG_BUFFER_SIZE 128
+#define MSG_BUFFER_SIZE 512
 
 class IRCServer;
 typedef std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> handler_map_type;
