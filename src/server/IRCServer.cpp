@@ -20,6 +20,8 @@ void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["JOIN"] = &IRCServer::handle_JOIN;
 	m_cmd_handlers["PART"] = &IRCServer::handle_PART;
 	m_cmd_handlers["PRIVMSG"] = &IRCServer::handle_PRIVMSG;
+	m_cmd_handlers["CAP"] = &IRCServer::handle_CAP;
+	m_cmd_handlers["AP"] = &IRCServer::handle_CAP;
 	m_cmd_handlers_init = true;
 }
 
@@ -229,4 +231,10 @@ void IRCServer::handle_PRIVMSG(IRCClient* client, const std::string& cmd) {
 void IRCServer::handle_PART(IRCClient* client, const std::string& cmd) {
 	std::string channel = cmd.substr(1, cmd.find(' ') - 1);
 	m_channel_manager.part(channel, client);
+}
+
+void IRCServer::handle_CAP(IRCClient* client, const std::string& cmd) {
+	(void) client;
+	(void) cmd;
+	std::cout << "[INFO] Ignore Capability Negotiation" << std::endl;
 }
