@@ -8,6 +8,7 @@ class IRCChannelManager {
 public:
 	IRCChannel* get(const std::string& channelName);
 	IRCChannel* get_or_create(const std::string& channelName, IRCClient* requester);
+	bool remove(IRCChannel* channel);
 	bool join(const std::string& channelName, IRCClient* client);
 	bool part(const std::string& channelName, IRCClient* client);
 	void part_from_all(IRCClient* client);

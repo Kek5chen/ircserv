@@ -32,6 +32,13 @@ bool IRCChannel::part(IRCClient* client) {
 	return true;
 }
 
+bool IRCChannel::part_all() {
+	bool result = true;
+	for (std::vector<IRCClient*>::iterator it = m_members.begin(); it < m_members.end(); it++)
+		this->part(*it);
+	return result;
+}
+
 void IRCChannel::send(const std::string &message) {
 	for (size_t i = 0; i < m_members.size(); i++)
 		m_members[i]->send_response(message);
@@ -52,4 +59,12 @@ bool IRCChannel::has_joined(IRCClient* client) {
 
 bool IRCChannel::is_operator(IRCClient* client) {
 	return m_creator == client;
+}
+
+size_t IRCChannel::get_member_count() {
+	return m_members.size();
+}
+
+const std::string &IRCChannel::get_name() {
+	return m_name;
 }

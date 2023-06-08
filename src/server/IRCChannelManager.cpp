@@ -14,6 +14,16 @@ IRCChannel* IRCChannelManager::get_or_create(const std::string& channelName, IRC
 	return m_channels[channelName];
 }
 
+bool IRCChannelManager::remove(IRCChannel* channel) {
+	if (!channel->get_member_count())
+		for (size_t i = 0; i < channel->get_member_count(); i++)
+			channel->part_all();
+	if (!m_channels.erase(channel->get_name()))
+		return false;
+	delete channel;
+	return true;
+}
+
 bool IRCChannelManager::join(const std::string& channelName, IRCClient* client) {
 	IRCChannel* channel = this->get_or_create(channelName, client);
 	if (channel->has_joined(client))
@@ -27,7 +37,10 @@ bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) 
 		return false;
 	if (!channel->has_joined(client))
 		return false;
-	return channel->part(client);
+	bool result = channel->part(client);
+	if (!channel->get_member_count())
+		this->remove(channel);
+	return result;
 }
 
 void IRCChannelManager::part_from_all(IRCClient* client) {
