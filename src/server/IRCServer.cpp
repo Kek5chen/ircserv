@@ -1,6 +1,5 @@
-#include <sys/socket.h>
 #include <stdexcept>
-#include <csignal>
+#include <unistd.h>
 #include <netinet/in.h>
 #include <climits>
 #include <cerrno>
