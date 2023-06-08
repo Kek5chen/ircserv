@@ -155,6 +155,7 @@ void IRCServer::poll_clients() {
 		bool keepConnection = this->handle(m_clients[i]);
 		if (keepConnection)
 			continue;
+		m_channel_manager.part_from_all(m_clients[i]);
 		m_clients[i]->flush_response();
 		delete m_clients[i];
 		m_clients.erase(std::remove(m_clients.begin(), m_clients.end(), m_clients[i]), m_clients.end());
