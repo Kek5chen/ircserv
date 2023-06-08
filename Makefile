@@ -24,7 +24,7 @@ $(NAME): $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEPS)
 	@echo "Building $<..."
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	@$(CC) -c $< -o $@ $(CPPFLAGS)
 
 clean:
