@@ -11,8 +11,11 @@ public:
 	bool join(IRCClient* client);
 	bool part(IRCClient* client);
 
-	void send(const std::string &message);
-	void send(IRCClient* sender, const std::string &message);
+	void send(const std::string& message);
+	void send(IRCClient* sender, const std::string& message);
+
+	bool has_joined(IRCClient* client);
+
 private:
 	const std::string m_name;
 	std::vector<IRCClient*> m_members;

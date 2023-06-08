@@ -38,3 +38,10 @@ void IRCChannel::send(IRCClient* sender, const std::string &message) {
 		if (m_members[i] != sender)
 			m_members[i]->send_response(message);
 }
+
+bool IRCChannel::has_joined(IRCClient* client) {
+	for (size_t i = 0; i < m_members.size(); i++)
+		if (m_members[i] == client)
+			return true;
+	return false;
+}
