@@ -28,6 +28,11 @@ bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) 
 	return channel->part(client);
 }
 
+void IRCChannelManager::part_from_all(IRCClient* client) {
+	for (std::map<std::string, IRCChannel*>::iterator it = m_channels.begin(); it != m_channels.end(); it++)
+		it->second->part(client);
+}
+
 void IRCChannelManager::send(const std::string& channelName, const std::string& message) {
 	IRCChannel* channel = this->get(channelName);
 	if (!channel)

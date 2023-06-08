@@ -10,6 +10,7 @@ public:
 	IRCChannel* get_or_create(const std::string& channelName);
 	bool join(const std::string& channelName, IRCClient* client);
 	bool part(const std::string& channelName, IRCClient* client);
+	void part_from_all(IRCClient* client);
 	void send(const std::string& channelName, const std::string& message);
 	void send(IRCClient* sender, const std::string& channelName, const std::string& message);
 private:
