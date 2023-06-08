@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <map>
 #include "server/IRCChannel.hpp"
 
 IRCChannel::IRCChannel(std::string name) : m_name(name) {}
@@ -21,10 +22,11 @@ bool IRCChannel::join(IRCClient* client) {
 }
 
 bool IRCChannel::part(IRCClient* client) {
-	if (std::find(m_members.begin(), m_members.end(), client) == m_members.end())
+	std::vector<IRCClient*>::iterator it = std::find(m_members.begin(), m_members.end(), client);
+	if (it == m_members.end())
 		return false;
 	this->send(":" + client->get_nickname() + "!" + client->get_username() + "@127.0.0.1 PART #" + m_name); // TODO: Get Client Hostname
-	m_members.erase(std::remove(m_members.begin(), m_members.end(), client), m_members.end());
+	m_members.erase(it);
 	return true;
 }
 
