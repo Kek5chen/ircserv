@@ -128,6 +128,7 @@ bool IRCServer::handle(IRCClient* client) {
 		return false;
 	if (!receive_data(client, &buf))
 		return false;
+	// TODO: Make proper parser https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
 	while (!buf.empty()) {
 		size_t end = buf.find("\r\n");
 		if (end == std::string::npos)
