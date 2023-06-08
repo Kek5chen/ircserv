@@ -107,19 +107,16 @@ void IRCServer::accept_new_clients() {
 }
 
 bool IRCServer::receive_data(IRCClient* client, std::string* buffer) {
-	static char preBuf[MSG_BUFFER_SIZE];
+	static char preBuf[MSG_BUFFER_SIZE + 1];
 	int received;
 
-	do {
-		received = recv(client->get_socket_fd(), preBuf, MSG_BUFFER_SIZE, 0);
-		if (received == -1)
-			throw std::runtime_error("An error occurred while trying to receive the sockets message.");
-		if (!received) {
-			std::cout << "[INFO] Client disconnected" << std::endl;
-			return false;
-		}
-		buffer->append(preBuf);
-	} while (received == MSG_BUFFER_SIZE);
+	received = recv(client->get_socket_fd(), preBuf, MSG_BUFFER_SIZE + 1, 0);
+	if (received == -1)
+		throw std::runtime_error("An error occurred while trying to receive the sockets message.");
+	if (!received) {
+		std::cout << "[INFO] Client disconnected" << std::endl;
+		return false;
+	}
 	return true;
 }
 
