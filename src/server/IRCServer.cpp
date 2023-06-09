@@ -6,6 +6,8 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <iostream>
+#include <sstream>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 
@@ -172,16 +174,21 @@ void IRCServer::handle_PASS(IRCClient* client, const std::string& pass) {
 		client->send_response(":127.0.0.1 464 PASS :Incorrect Password");
 }
 
+void IRCServer::send_motd(IRCClient* client) {
+	client->send_response(":127.0.0.1 001 " + client->get_nickname() +  " :Welcome to the ImKX IRC Server");
+	client->send_response(":127.0.0.1 002 " + client->get_nickname() +  " :Your host is imkx.dev, running version " + IRC_VERSION + " built on " + __DATE__ + " at " + __TIME__);
+	std::string useramount = ((std::ostringstream&)(std::ostringstream() << m_clients.size())).str();
+	client->send_response(":127.0.0.1 251 " + client->get_nickname() +  " :There are " + useramount + " user(s) online");
+	client->send_response(":127.0.0.1 376 " + client->get_nickname() + " :End of MOTD");
+}
+
 void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
 	if (nickname.empty())
 		return;
 	client->m_nickname = nickname;
 	if (client->m_is_registered)
 		return;
-	std::string response = ":127.0.0.1 001 " + client->m_nickname +  " :Welcome to the ImKX IRC Server";
-	client->send_response(response);
-	response = ":127.0.0.1 376 " + client->m_nickname + " :End of MOTD";
-	client->send_response(response);
+	send_motd(client);
 	client->m_is_registered = true;
 }
 

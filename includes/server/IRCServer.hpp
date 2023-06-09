@@ -8,6 +8,8 @@
 
 #define MSG_BUFFER_SIZE 512
 
+#define IRC_VERSION "0.5"
+
 class IRCServer;
 typedef std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> handler_map_type;
 
@@ -25,6 +27,8 @@ private:
 	void poll_clients();
 	bool receive_data(IRCClient* client, std::string* buffer);
 	bool handle(IRCClient* client);
+
+	void send_motd(IRCClient* client);
 
 	void handle_PASS(IRCClient* client, const std::string& cmd);
 	void handle_NICK(IRCClient* client, const std::string& cmd);
