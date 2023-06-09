@@ -115,10 +115,8 @@ bool IRCServer::receive_data(IRCClient* client, std::string* buffer) {
 	received = recv(client->get_socket_fd(), preBuf, MSG_BUFFER_SIZE + 1, 0);
 	if (received == -1)
 		throw std::runtime_error("An error occurred while trying to receive the sockets message.");
-	if (!received) {
-		std::cout << "[INFO] Client disconnected" << std::endl;
+	if (!received)
 		return false;
-	}
 	buffer->append(preBuf);
 	return true;
 }
@@ -141,6 +139,8 @@ bool IRCServer::handle(IRCClient* client) {
 			continue;
 		std::string keyword = cmd.substr(0, cmd.find(' '));
 
+		if (keyword == "QUIT")
+			return false;
 		handler_map_type::iterator cmdIt = m_cmd_handlers.find(keyword);
 		if (cmdIt == m_cmd_handlers.end()) {
 			std::cout << "[IN] === NOT IMPLEMENTED ===" << std::endl;
@@ -160,6 +160,7 @@ void IRCServer::poll_clients() {
 		bool keepConnection = this->handle(m_clients[i]);
 		if (keepConnection)
 			continue;
+		std::cout << "[INFO] Client disconnected" << std::endl;
 		m_channel_manager.part_from_all(m_clients[i]);
 		m_clients[i]->flush_response();
 		delete m_clients[i];
