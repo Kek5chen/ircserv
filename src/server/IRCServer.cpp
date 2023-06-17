@@ -124,8 +124,10 @@ bool IRCServer::receive_data(IRCClient* client, std::string* buffer) {
 bool IRCServer::handle(IRCClient* client) {
 	std::string buf;
 	short revents = client->poll();
-	if (!revents)
+	if (revents & POLLHUP || revents & POLLERR || revents & POLLNVAL)
 		return false;
+	if (!(revents & POLLIN))
+		return true;
 	if (!receive_data(client, &buf))
 		return false;
 	// TODO: Make proper parser https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
