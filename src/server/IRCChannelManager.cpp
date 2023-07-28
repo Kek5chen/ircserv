@@ -43,6 +43,18 @@ bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) 
 	return result;
 }
 
+bool IRCChannelManager::kick(const std::string &channelName, const std::string &userName, IRCClient* sender) {
+    IRCChannel* channel = this->get(channelName);
+    if (!channel)
+        return false;
+    if (!channel->is_operator(sender))
+        return false;
+    IRCClient* client = channel->get_client(userName);
+    if (!client)
+        return false;
+    return part(channelName, client);
+}
+
 void IRCChannelManager::part_from_all(IRCClient* client) {
 	for (std::map<std::string, IRCChannel*>::iterator it = m_channels.begin(); it != m_channels.end(); it++)
 		it->second->part(client);

@@ -5,13 +5,14 @@
 #include <map>
 #include "IRCClient.hpp"
 #include "IRCChannelManager.hpp"
+#include "IRCCommand.hpp"
 
 #define MSG_BUFFER_SIZE 512
 
 #define IRC_VERSION "0.5"
 
 class IRCServer;
-typedef std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> handler_map_type;
+typedef std::map<std::string, void(IRCServer::*)(IRCClient*, const IRCCommand&)> handler_map_type;
 
 class IRCServer {
 public:
@@ -20,7 +21,7 @@ public:
 
 	void bind();
 	void listen();
-	void loop();
+	int loop();
 	void stop();
 private:
 	void accept_new_clients();
@@ -30,14 +31,15 @@ private:
 
 	void send_motd(IRCClient* client);
 
-	void handle_PASS(IRCClient* client, const std::string& cmd);
-	void handle_NICK(IRCClient* client, const std::string& cmd);
-	void handle_USER(IRCClient* client, const std::string& cmd);
-	void handle_PING(IRCClient* client, const std::string& cmd);
-	void handle_JOIN(IRCClient* client, const std::string& cmd);
-	void handle_PART(IRCClient* client, const std::string& cmd);
-	void handle_PRIVMSG(IRCClient* client, const std::string& cmd);
-	void handle_CAP(IRCClient* client, const std::string& cmd);
+	void handle_PASS(IRCClient* client, const IRCCommand& cmd);
+	void handle_NICK(IRCClient* client, const IRCCommand& cmd);
+	void handle_USER(IRCClient* client, const IRCCommand& cmd);
+	void handle_PING(IRCClient* client, const IRCCommand& cmd);
+	void handle_JOIN(IRCClient* client, const IRCCommand& cmd);
+	void handle_PART(IRCClient* client, const IRCCommand& cmd);
+	void handle_PRIVMSG(IRCClient* client, const IRCCommand& cmd);
+	void handle_CAP(IRCClient* client, const IRCCommand& cmd);
+	void handle_KICK(IRCClient* client, const IRCCommand& cmd);
 
 	static void init_cmd_handlers();
 

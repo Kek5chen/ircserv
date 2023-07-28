@@ -20,6 +20,9 @@ public:
 
 	const std::string& get_name();
 	size_t get_member_count();
+
+    IRCClient* get_client(const std::string &basicString);
+
 private:
 	const std::string m_name;
 	std::vector<IRCClient*> m_members;

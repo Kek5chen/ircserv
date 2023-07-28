@@ -1,7 +1,6 @@
 #include <iostream>
 #include "setup/InitData.hpp"
 #include "server/IRCServer.hpp"
-#include "setup/SignalHandlers.hpp"
 
 int main(int argc, const char** argv) {
 	InitData initData(argc, argv);
@@ -20,6 +19,5 @@ int main(int argc, const char** argv) {
 	server.listen();
 	std::cout << "Server listening on port " << initData.get_port() << std::endl;
 	std::cout << "--- Start of Server Logs ---" << std::endl;
-	server.loop();
-	return 0;
+	return server.loop();
 }

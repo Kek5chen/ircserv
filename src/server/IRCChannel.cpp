@@ -68,3 +68,10 @@ size_t IRCChannel::get_member_count() {
 const std::string &IRCChannel::get_name() {
 	return m_name;
 }
+
+IRCClient* IRCChannel::get_client(const std::string &userName) {
+    for (size_t i = 0; i < m_members.size(); i++)
+        if (m_members[i]->get_username() == userName)
+            return m_members[i];
+    return 0;
+}

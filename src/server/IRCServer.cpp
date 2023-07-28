@@ -6,13 +6,12 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
-#include <iostream>
 #include <sstream>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 
 bool IRCServer::m_cmd_handlers_init = false;
-std::map<std::string, void(IRCServer::*)(IRCClient*, const std::string&)> IRCServer::m_cmd_handlers;
+std::map<std::string, void(IRCServer::*)(IRCClient*, const IRCCommand&)> IRCServer::m_cmd_handlers;
 
 void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["NICK"] = &IRCServer::handle_NICK;
@@ -24,6 +23,10 @@ void IRCServer::init_cmd_handlers() {
 	m_cmd_handlers["PRIVMSG"] = &IRCServer::handle_PRIVMSG;
 	m_cmd_handlers["CAP"] = &IRCServer::handle_CAP;
 	m_cmd_handlers["AP"] = &IRCServer::handle_CAP;
+    m_cmd_handlers["KICK"] = &IRCServer::handle_KICK;
+    //m_cmd_handlers["INVITE"] = &IRCServer::handle_INVITE;
+    //m_cmd_handlers["TOPIC"] = &IRCServer::handle_TOPIC;
+    //m_cmd_handlers["MODE"] = &IRCServer::handle_MODE;
 	m_cmd_handlers_init = true;
 }
 
@@ -65,13 +68,14 @@ void IRCServer::listen() {
 	m_is_listening = true;
 }
 
-void IRCServer::loop() {
+int IRCServer::loop() {
 	if (!m_is_listening)
 		this->listen();
 	while (!m_should_stop) {
 		this->accept_new_clients();
 		this->poll_clients();
 	}
+    return 0;
 }
 
 void IRCServer::stop() {
@@ -135,24 +139,23 @@ bool IRCServer::handle(IRCClient* client) {
 		size_t end = buf.find("\r\n");
 		if (end == std::string::npos)
 			break;
-		std::string cmd = buf.substr(0, end);
+        IRCCommand cmd(buf.substr(0, end + 2));
 		buf = buf.substr(end + 2);
-		if (cmd.empty())
+		if (!cmd.is_valid())
 			continue;
-		std::string keyword = cmd.substr(0, cmd.find(' '));
 
-		if (keyword == "QUIT")
+		if (cmd.m_command.m_name == "QUIT")
 			return false;
-		handler_map_type::iterator cmdIt = m_cmd_handlers.find(keyword);
+		handler_map_type::iterator cmdIt = m_cmd_handlers.find(cmd.m_command.m_name);
 		if (cmdIt == m_cmd_handlers.end()) {
 			std::cout << "[IN] === NOT IMPLEMENTED ===" << std::endl;
-			std::cout << "[IN] " << cmd << std::endl;
+			std::cout << "[IN] " << cmd.m_command.m_name << std::endl;
 			std::cout << "[IN] ===      ====       ===" << std::endl;
 			continue;
 		}
-		if (keyword != "PASS" && !client->has_access(m_password))
+		if (cmd.m_command.m_name != "PASS" && !client->has_access(m_password))
 			return false;
-		(this->*(cmdIt->second))(client, cmd.substr(keyword.size() + 1));
+		(this->*(cmdIt->second))(client, cmd);
 	}
 	return true;
 }
@@ -171,9 +174,9 @@ void IRCServer::poll_clients() {
 	}
 }
 
-void IRCServer::handle_PASS(IRCClient* client, const std::string& pass) {
-	client->m_supplied_password = pass;
-	if (!m_password.empty() && m_password != pass)
+void IRCServer::handle_PASS(IRCClient* client, const IRCCommand& cmd) {
+	client->m_supplied_password = cmd.m_params[0];
+	if (!client->has_access(m_password))
 		client->send_response(":127.0.0.1 464 PASS :Incorrect Password");
 }
 
@@ -185,67 +188,62 @@ void IRCServer::send_motd(IRCClient* client) {
 	client->send_response(":127.0.0.1 376 " + client->get_nickname() + " :End of MOTD");
 }
 
-void IRCServer::handle_NICK(IRCClient* client, const std::string& nickname) {
-	if (nickname.empty())
-		return;
-	client->m_nickname = nickname;
+void IRCServer::handle_NICK(IRCClient* client, const IRCCommand& cmd) {
+	client->m_nickname = cmd.m_params[0];
 	if (client->m_is_registered)
 		return;
 	send_motd(client);
 	client->m_is_registered = true;
 }
 
-static std::vector<std::string> parse_params(const std::string& paramstr) {
-	std::vector<std::string> params;
-	size_t last = 0;
-	size_t cur;
-	while ((cur = paramstr.find(' ', last)) != std::string::npos) {
-		params.push_back(paramstr.substr(last, cur - last));
-		last = cur + 1;
-	}
-	if (paramstr[last] == ':')
-		params.push_back(paramstr.substr(last + 1));
-	return params;
+void IRCServer::handle_USER(IRCClient* client, const IRCCommand& cmd) {
+    client->m_username = cmd.m_params[0];
+    if (cmd.m_params.size() > 1)
+	    client->m_mode = cmd.m_params[1];
+	client->m_real_name = cmd.m_end;
 }
 
-void IRCServer::handle_USER(IRCClient* client, const std::string& cmd) {
-	std::vector<std::string> params = parse_params(cmd);
-	if (params.size() != 4)
-		return;
-	client->m_username = params[0];
-	client->m_mode = params[1];
-	client->m_real_name = params[3];
-}
-
-void IRCServer::handle_PING(IRCClient* client, const std::string& cmd) {
-	const std::string response = "PONG " + cmd;
+void IRCServer::handle_PING(IRCClient* client, const IRCCommand& cmd) {
+    const std::string& add = cmd.m_params.empty() ? "" : " " + cmd.m_params[0];
+	const std::string response = "PONG" + add;
 	client->send_response(response);
 }
 
-void IRCServer::handle_JOIN(IRCClient* client, const std::string& channel) {
+void IRCServer::handle_JOIN(IRCClient* client, const IRCCommand& cmd) {
+    std::string channel = cmd.m_params[0];
+    if (channel.empty()) {
+        return;
+    }
+
+	channel = channel.substr(channel[0] == '#');
 	if (channel.empty())
 		return;
-
-	std::string channelName = channel.substr(channel[0] == '#');
-	if (channelName.empty())
-		return;
-	m_channel_manager.join(channelName, client);
+	m_channel_manager.join(channel, client);
 }
 
-void IRCServer::handle_PRIVMSG(IRCClient* client, const std::string& cmd) {
-	std::string channel = cmd.substr(0, cmd.find(' '));
-	std::string message = cmd.substr(cmd.find(':') + 1);
+void IRCServer::handle_PRIVMSG(IRCClient* client, const IRCCommand& cmd) {
+	const std::string& channel = cmd.m_params[0];
+	const std::string& message = cmd.m_end;
 	std::string response = ":" + client->m_nickname + "!" + client->m_username + "@127.0.0.1 PRIVMSG " + channel + " :" + message;
 	m_channel_manager.send(client, channel.substr(1), response);
 }
 
-void IRCServer::handle_PART(IRCClient* client, const std::string& cmd) {
-	std::string channel = cmd.substr(1, cmd.find(' ') - 1);
+void IRCServer::handle_PART(IRCClient* client, const IRCCommand& cmd) {
+	const std::string& channel = cmd.m_params[0];
 	m_channel_manager.part(channel, client);
 }
 
-void IRCServer::handle_CAP(IRCClient* client, const std::string& cmd) {
+void IRCServer::handle_CAP(IRCClient* client, const IRCCommand& cmd) {
 	(void) client;
 	(void) cmd;
 	std::cout << "[INFO] Ignore Capability Negotiation" << std::endl;
+}
+
+void IRCServer::handle_KICK(IRCClient* client, const IRCCommand& cmd) {
+    if (cmd.m_params.size() >= 2)
+        return;
+    const std::string& channel = cmd.m_params[0];
+    const std::string& targetClientNick = cmd.m_params[1];
+    // TODO: const std::string& kickMessage = cmd.m_end;
+    m_channel_manager.kick(channel, targetClientNick, client);
 }
