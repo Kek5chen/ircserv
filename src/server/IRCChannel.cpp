@@ -32,6 +32,15 @@ bool IRCChannel::part(IRCClient* client) {
 	return true;
 }
 
+bool IRCChannel::kick(IRCClient *client, const std::string &reason) {
+	std::vector<IRCClient*>::iterator it = std::find(m_members.begin(), m_members.end(), client);
+	if (it == m_members.end())
+		return false;
+	this->send(":" + client->get_nickname() + "!" + client->get_username() + "@127.0.0.1 KICK #" + m_name + " :" + reason); // TODO: Get Client Hostname
+	m_members.erase(it);
+	return true;
+}
+
 bool IRCChannel::part_all() {
 	bool result = true;
 	for (std::vector<IRCClient*>::iterator it = m_members.begin(); it < m_members.end(); it++)

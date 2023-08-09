@@ -11,7 +11,7 @@ public:
 	bool remove(IRCChannel* channel);
 	bool join(const std::string& channelName, IRCClient* client);
     bool part(const std::string& channelName, IRCClient* client);
-    bool kick(const std::string& channelName, const std::string& userName, IRCClient* sender);
+    bool kick(IRCClient* sender, const std::string &channelName, const std::string &userName, const std::string &reason);
 	void part_from_all(IRCClient* client);
 	void send(const std::string& channelName, const std::string& message);
 	void send(IRCClient* sender, const std::string& channelName, const std::string& message);

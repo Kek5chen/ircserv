@@ -11,6 +11,7 @@ public:
 	bool join(IRCClient* client);
 	bool part(IRCClient* client);
 	bool part_all();
+	bool kick(IRCClient *client, const std::string &reason);
 
 	void send(const std::string& message);
 	void send(IRCClient* sender, const std::string& message);

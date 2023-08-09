@@ -43,7 +43,8 @@ bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) 
 	return result;
 }
 
-bool IRCChannelManager::kick(const std::string &channelName, const std::string &userName, IRCClient* sender) {
+bool IRCChannelManager::kick(
+		IRCClient* sender, const std::string &channelName, const std::string &userName, const std::string &reason) {
     IRCChannel* channel = this->get(channelName);
     if (!channel)
         return false;
@@ -51,8 +52,19 @@ bool IRCChannelManager::kick(const std::string &channelName, const std::string &
         return false;
     IRCClient* client = channel->get_client(userName);
     if (!client)
-        return false;
-    return part(channelName, client);
+	{
+		sender->send_response(":server 401 " + sender->get_nickname() + " " + userName + " :No such nick/channel");
+		return false;
+	}
+	if (!channel->has_joined(client))
+	{
+		sender->send_response(":server 441 " + sender->get_nickname() + " " + userName + " " + channelName + " :They aren't in this channel");
+		return false;
+	}
+	bool status = channel->kick(client, reason);
+	if (!channel->get_member_count())
+		this->remove(channel);
+	return status;
 }
 
 void IRCChannelManager::part_from_all(IRCClient* client) {

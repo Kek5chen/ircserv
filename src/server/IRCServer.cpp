@@ -135,6 +135,7 @@ bool IRCServer::handle(IRCClient* client) {
 	if (!receive_data(client, &buf))
 		return false;
 	// TODO: Make proper parser https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
+    //    ^ done, but also implement the IRCCommand with sending data, not just parsing.
 	while (!buf.empty()) {
 		size_t end = buf.find("\r\n");
 		if (end == std::string::npos)
@@ -240,10 +241,11 @@ void IRCServer::handle_CAP(IRCClient* client, const IRCCommand& cmd) {
 }
 
 void IRCServer::handle_KICK(IRCClient* client, const IRCCommand& cmd) {
-    if (cmd.m_params.size() >= 2)
+    if (cmd.m_params.size() < 2)
         return;
     const std::string& channel = cmd.m_params[0];
     const std::string& targetClientNick = cmd.m_params[1];
-    // TODO: const std::string& kickMessage = cmd.m_end;
-    m_channel_manager.kick(channel, targetClientNick, client);
+    const std::string& kickMessage = cmd.m_end;
+    m_channel_manager.kick(client, channel, targetClientNick, kickMessage);
+    // TODO: WeeChat outputs "sender has kicked" and that's it. needs to be checked.
 }
