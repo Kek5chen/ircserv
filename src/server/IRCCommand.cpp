@@ -3,7 +3,7 @@
 #include <string>
 #include <iterator>
 
-static int stol(const std::string& str) {
+static int ft_stol(const std::string& str) {
     std::istringstream iss(str);
     int result;
     iss >> result;
@@ -29,7 +29,7 @@ IRCCommand::IRCCommand(const std::string& cmd) : m_has_prefix() {
 
     // Command
     m_command.m_name = str;
-    m_command.m_code = stol(m_command.m_name);
+    m_command.m_code = ft_stol(m_command.m_name);
 
     // Parameters
     std::getline(iss, str, ':');
