@@ -1,12 +1,14 @@
 #include <stdexcept>
 #include <unistd.h>
-#include <netinet/in.h>
+#include <sys/socket.h>
 #include <climits>
 #include <cerrno>
 #include <iostream>
 #include <algorithm>
 #include <map>
 #include <sstream>
+#include <netinet/in.h>
+#include <fcntl.h>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 
@@ -42,9 +44,21 @@ IRCServer::~IRCServer() {
 }
 
 void IRCServer::bind() {
-	m_socket_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
-	if (m_socket_fd < 0)
-		throw std::runtime_error("Socket creation failed");
+    m_socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (m_socket_fd < 0) {
+        throw std::runtime_error("Socket creation failed");
+    }
+
+    int flags = fcntl(m_socket_fd, F_GETFL, 0);
+    if (flags == -1) {
+        throw std::runtime_error("fcntl get failed");
+    }
+
+    flags |= O_NONBLOCK;
+
+    if (fcntl(m_socket_fd, F_SETFL, flags) == -1) {
+        throw std::runtime_error("fcntl set failed");
+    }
 
 	static const int state = 1;
 	if (setsockopt(m_socket_fd, SOL_SOCKET, SO_REUSEADDR, &state, sizeof(state)) < 0)
