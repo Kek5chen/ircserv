@@ -10,6 +10,10 @@ static int ft_stol(const std::string& str) {
     return result;
 }
 
+IRCCommand::IRCCommand() {
+
+}
+
 IRCCommand::IRCCommand(const std::string& cmd) : m_has_prefix() {
     size_t cmdEnd = cmd.find("\r\n");
     std::istringstream iss(cmdEnd == std::string::npos ? cmd : cmd.substr(0, cmdEnd));
@@ -50,7 +54,7 @@ IRCCommand::~IRCCommand() {
     // Destructor
 }
 
-bool IRCCommand::is_valid() const{
+bool IRCCommand::is_valid() const {
     return !m_command.m_name.empty() && !m_params.empty();
 }
 
@@ -73,7 +77,10 @@ std::string IRCCommand::make_prefix() const {
 IRCCommand::operator std::string() const {
     std::string result;
     result += make_prefix();
-    result += m_command.m_name;
+    if (m_command.m_code)
+        result += m_command.m_code;
+    else
+        result += m_command.m_name;
     std::stringstream ss;
     std::copy(m_params.begin(), m_params.end(), std::ostream_iterator<std::string>(ss, " "));
     std::string params = ss.str();

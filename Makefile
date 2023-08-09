@@ -16,11 +16,11 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -I $(INC_DIR) -g
 DEPS = $(wildcard $(INC_DIR)/*.h)
 
 all: $(NAME)
-	@echo "--- $(NAME) was built successfully ---"
 
 $(NAME): $(OBJS)
 	@echo "Linking $(NAME)..."
 	@$(CC) -o $@ $^
+	@echo "--- $(NAME) was built successfully ---"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEPS)
 	@echo "Building $<..."

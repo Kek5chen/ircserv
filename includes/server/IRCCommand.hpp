@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include "IRCClient.hpp"
@@ -5,6 +7,7 @@
 class IRCCommand {
 public:
     explicit IRCCommand(const std::string& commandStr);
+    IRCCommand();
     ~IRCCommand();
 
     std::string make_prefix() const;
