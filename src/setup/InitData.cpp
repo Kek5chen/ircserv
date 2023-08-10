@@ -28,7 +28,7 @@ InitData::InitData(int argc, const char **argv) : mValid(true) {
 	unsigned int port;
 	std::istringstream ss(argv[1]);
 	ss >> port;
-	if (port > SHRT_MAX) {
+	if (port > USHRT_MAX) {
 		mError = "The supplied port was out of range.";
 		mValid = false;
 		return;
