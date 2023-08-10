@@ -8,25 +8,25 @@ public:
 	explicit IRCClient(int socket_id);
 	~IRCClient();
 
-	bool is_valid() const;
-	bool has_access(const std::string& pass);
-	int get_socket_fd();
+	bool isValid() const;
+	bool hasAccess(const std::string& pass);
+	int getSocketFd();
 	short poll();
-	void send_response(const std::string& str);
-	bool flush_response();
+	void sendResponse(const std::string& str);
+	bool flushResponse();
 
-	const std::string& get_nickname();
-	const std::string& get_username();
+	const std::string& getNickname();
+	const std::string& getUsername();
 private:
-	int m_socket_fd;
-	bool m_is_open;
-	struct pollfd m_pfd;
-	std::string m_response_buffer;
+	int mSocketFd;
+	bool mIsOpen;
+	struct pollfd mPfd;
+	std::string mResponseBuffer;
 
-	bool m_is_registered;
-	std::string m_nickname;
-	std::string m_username;
-	std::string m_supplied_password;
-	std::string m_mode;
-	std::string m_real_name;
+	bool mIsRegistered;
+	std::string mNickname;
+	std::string mUsername;
+	std::string mSuppliedPassword;
+	std::string mMode;
+	std::string mRealName;
 };

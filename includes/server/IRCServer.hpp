@@ -24,35 +24,35 @@ public:
 	int loop();
 	void stop();
 private:
-	void accept_new_clients();
-	void poll_clients();
-	bool receive_data(IRCClient* client, std::string* buffer);
+	void acceptNewClients();
+	void pollClients();
+	bool receiveData(IRCClient* client, std::string* buffer);
 	bool handle(IRCClient* client);
 
-	void send_motd(IRCClient* client);
+	void sendMotd(IRCClient* client);
 
-	void handle_PASS(IRCClient* client, const IRCCommand& cmd);
-	void handle_NICK(IRCClient* client, const IRCCommand& cmd);
-	void handle_USER(IRCClient* client, const IRCCommand& cmd);
-	void handle_PING(IRCClient* client, const IRCCommand& cmd);
-	void handle_JOIN(IRCClient* client, const IRCCommand& cmd);
-	void handle_PART(IRCClient* client, const IRCCommand& cmd);
-	void handle_PRIVMSG(IRCClient* client, const IRCCommand& cmd);
-	void handle_CAP(IRCClient* client, const IRCCommand& cmd);
-	void handle_KICK(IRCClient* client, const IRCCommand& cmd);
+	void handlePASS(IRCClient* client, const IRCCommand& cmd);
+	void handleNICK(IRCClient* client, const IRCCommand& cmd);
+	void handleUSER(IRCClient* client, const IRCCommand& cmd);
+	void handlePING(IRCClient* client, const IRCCommand& cmd);
+	void handleJOIN(IRCClient* client, const IRCCommand& cmd);
+	void handlePART(IRCClient* client, const IRCCommand& cmd);
+	void handlePRIVMSG(IRCClient* client, const IRCCommand& cmd);
+	void handleCAP(IRCClient* client, const IRCCommand& cmd);
+	void handleKICK(IRCClient* client, const IRCCommand& cmd);
 
-	static void init_cmd_handlers();
+	static void initCmdHandlers();
 
-	const unsigned short m_port;
-	const std::string& m_password;
-	int m_socket_fd;
-	bool m_is_bound;
-	bool m_is_listening;
-	bool m_should_stop;
+	const unsigned short mPort;
+	const std::string& mPassword;
+	int mSocketFd;
+	bool mIsBound;
+	bool mIsListening;
+	bool mShouldStop;
 
-	std::vector<IRCClient*> m_clients;
-	IRCChannelManager m_channel_manager;
+	std::vector<IRCClient*> mClients;
+	IRCChannelManager mChannelManager;
 
-	static handler_map_type m_cmd_handlers;
-	static bool m_cmd_handlers_init;
+	static handler_map_type mCmdHandlers;
+	static bool mCmdHandlersInit;
 };

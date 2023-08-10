@@ -11,14 +11,14 @@ void graceful_signal_handler(int signal) {
 	exit(0);
 }
 
-void register_signals(IRCServer* ctx) {
+void registerSignals(IRCServer* ctx) {
 	g_ctx = ctx;
 	std::signal(SIGABRT, graceful_signal_handler);
 	std::signal(SIGTERM, graceful_signal_handler);
 	std::signal(SIGHUP, graceful_signal_handler);
 }
 
-void unregister_signals() {
+void unregisterSignals() {
 	g_ctx = 0;
 	std::signal(SIGABRT, SIG_DFL);
 	std::signal(SIGTERM, SIG_DFL);

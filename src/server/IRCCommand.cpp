@@ -14,7 +14,7 @@ IRCCommand::IRCCommand() {
 
 }
 
-IRCCommand::IRCCommand(const std::string& cmd) : m_has_prefix() {
+IRCCommand::IRCCommand(const std::string& cmd) : mHasPrefix() {
     size_t cmdEnd = cmd.find("\r\n");
     std::istringstream iss(cmdEnd == std::string::npos ? cmd : cmd.substr(0, cmdEnd));
     std::string str;
@@ -24,16 +24,16 @@ IRCCommand::IRCCommand(const std::string& cmd) : m_has_prefix() {
     if (str[0] == ':') {
         str = str.substr(1);
         std::string username_host = str.substr(str.find('!') + 1);
-        m_prefix.m_hostname = str.substr(0, str.find('!'));
-        m_prefix.m_username = username_host.substr(0, username_host.find('@'));
-        m_prefix.m_host = username_host.substr(username_host.find('@') + 1);
+        mPrefix.mHostname = str.substr(0, str.find('!'));
+        mPrefix.mUsername = username_host.substr(0, username_host.find('@'));
+        mPrefix.mHost = username_host.substr(username_host.find('@') + 1);
         std::getline(iss, str, ' ');
-        m_has_prefix = true;
+        mHasPrefix = true;
     }
 
     // Command
-    m_command.m_name = str;
-    m_command.m_code = ft_stol(m_command.m_name);
+    mCommand.mName = str;
+    mCommand.mCode = ft_stol(mCommand.mName);
 
     // Parameters
     std::getline(iss, str, ':');
@@ -41,12 +41,12 @@ IRCCommand::IRCCommand(const std::string& cmd) : m_has_prefix() {
     std::istringstream tokenStream(str);
     while (std::getline(tokenStream, token, ' '))
     {
-        m_params.push_back(token);
+        mParams.push_back(token);
     }
 
-    std::getline(iss, m_end);
-    if (!m_end.empty() && m_end[0] == ':') {
-        m_end = m_end.substr(1);
+    std::getline(iss, mEnd);
+    if (!mEnd.empty() && mEnd[0] == ':') {
+        mEnd = mEnd.substr(1);
     }
 }
 
@@ -54,41 +54,41 @@ IRCCommand::~IRCCommand() {
     // Destructor
 }
 
-bool IRCCommand::is_valid() const {
-    return !m_command.m_name.empty() && !m_params.empty();
+bool IRCCommand::isValid() const {
+    return !mCommand.mName.empty() && !mParams.empty();
 }
 
-void IRCCommand::send_to(IRCClient &client) const {
-    client.send_response(*this);
+void IRCCommand::sendTo(IRCClient &client) const {
+    client.sendResponse(*this);
 }
 
-std::string IRCCommand::make_prefix() const {
+std::string IRCCommand::makePrefix() const {
     std::string prefix;
-    if (m_has_prefix) {
-        prefix += ":" + m_prefix.m_hostname;
-        if (!m_prefix.m_username.empty())
-            prefix += "!" + m_prefix.m_username;
-        if (!m_prefix.m_host.empty())
-            prefix += "@" + m_prefix.m_host;
+    if (mHasPrefix) {
+        prefix += ":" + mPrefix.mHostname;
+        if (!mPrefix.mUsername.empty())
+            prefix += "!" + mPrefix.mUsername;
+        if (!mPrefix.mHost.empty())
+            prefix += "@" + mPrefix.mHost;
     }
     return prefix;
 }
 
 IRCCommand::operator std::string() const {
     std::string result;
-    result += make_prefix();
-    if (m_command.m_code)
-        result += m_command.m_code;
+    result += makePrefix();
+    if (mCommand.mCode)
+        result += mCommand.mCode;
     else
-        result += m_command.m_name;
+        result += mCommand.mName;
     std::stringstream ss;
-    std::copy(m_params.begin(), m_params.end(), std::ostream_iterator<std::string>(ss, " "));
+    std::copy(mParams.begin(), mParams.end(), std::ostream_iterator<std::string>(ss, " "));
     std::string params = ss.str();
     result += params;
     if (!result.empty())
         result.erase(result.end() - 1);
-    if (!m_end.empty()) {
-        result += " :" + m_end;
+    if (!mEnd.empty()) {
+        result += " :" + mEnd;
     }
     return result;
 }

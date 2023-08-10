@@ -4,58 +4,58 @@
 #include <iostream>
 #include "server/IRCClient.hpp"
 
-IRCClient::IRCClient(int socket_id) : m_is_open(false), m_pfd(), m_is_registered(false),
-	m_nickname(), m_username(), m_supplied_password() {
-	m_socket_fd = socket_id;
-	m_is_open = m_socket_fd >= 0;
-	m_pfd.events = POLLIN | POLLOUT;
-	m_pfd.fd = m_socket_fd;
+IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(false),
+	mNickname(), mUsername(), mSuppliedPassword() {
+	mSocketFd = socket_id;
+	mIsOpen = mSocketFd >= 0;
+	mPfd.events = POLLIN | POLLOUT;
+	mPfd.fd = mSocketFd;
 }
 
-bool IRCClient::is_valid() const {
-	return m_is_open;
+bool IRCClient::isValid() const {
+	return mIsOpen;
 }
 
 IRCClient::~IRCClient() {
-	close(m_socket_fd);
+	close(mSocketFd);
 }
 
-int IRCClient::get_socket_fd() {
-	return m_socket_fd;
+int IRCClient::getSocketFd() {
+	return mSocketFd;
 }
 
 short IRCClient::poll() {
-	this->flush_response();
-	int changed = ::poll(&m_pfd, 1, 0);
+	this->flushResponse();
+	int changed = ::poll(&mPfd, 1, 0);
 	if (changed == -1)
 		throw std::runtime_error("An error occurred while trying to handle a client");
 	if (!changed)
 		return 0;
-	return m_pfd.revents;
+	return mPfd.revents;
 }
 
-bool IRCClient::has_access(const std::string &pass) {
-	return pass.empty() || pass == m_supplied_password;
+bool IRCClient::hasAccess(const std::string &pass) {
+	return pass.empty() || pass == mSuppliedPassword;
 }
 
-void IRCClient::send_response(const std::string &str) {
-	m_response_buffer += str;
-	m_response_buffer += '\n';
+void IRCClient::sendResponse(const std::string &str) {
+	mResponseBuffer += str;
+	mResponseBuffer += '\n';
 }
 
-bool IRCClient::flush_response() {
-	if (m_response_buffer.empty())
+bool IRCClient::flushResponse() {
+	if (mResponseBuffer.empty())
 		return true;
-	std::cout << "[OUT] " << m_response_buffer << std::endl;
-	int result = send(m_socket_fd, m_response_buffer.data(), m_response_buffer.size(), 0);
-	m_response_buffer.clear();
-	return (size_t)result == m_response_buffer.size();
+	std::cout << "[OUT] " << mResponseBuffer << std::endl;
+	int result = send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
+	mResponseBuffer.clear();
+	return (size_t)result == mResponseBuffer.size();
 }
 
-const std::string& IRCClient::get_nickname() {
-	return m_nickname;
+const std::string& IRCClient::getNickname() {
+	return mNickname;
 }
 
-const std::string& IRCClient::get_username() {
-	return m_username;
+const std::string& IRCClient::getUsername() {
+	return mUsername;
 }

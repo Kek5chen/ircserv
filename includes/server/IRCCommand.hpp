@@ -10,22 +10,22 @@ public:
     IRCCommand();
     ~IRCCommand();
 
-    std::string make_prefix() const;
+    std::string makePrefix() const;
     operator std::string() const;
 
     struct {
-        std::string m_hostname;
-        std::string m_username;
-        std::string m_host;
-    } m_prefix;
-    bool m_has_prefix;
+        std::string mHostname;
+        std::string mUsername;
+        std::string mHost;
+    } mPrefix;
+    bool mHasPrefix;
     struct {
-        std::string m_name;
-        int m_code;
-    } m_command;
-    std::vector<std::string> m_params;
-    std::string m_end;
+        std::string mName;
+        int mCode;
+    } mCommand;
+    std::vector<std::string> mParams;
+    std::string mEnd;
 
-    bool is_valid() const;
-    void send_to(IRCClient& client) const;
+    bool isValid() const;
+    void sendTo(IRCClient& client) const;
 };

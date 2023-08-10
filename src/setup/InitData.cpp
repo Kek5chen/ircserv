@@ -3,7 +3,7 @@
 #include <climits>
 #include "setup/InitData.hpp"
 
-static bool is_port_valid(const char* port) {
+static bool isPortValid(const char* port) {
 	if (!port)
 		return false;
 	while (*port) {
@@ -14,42 +14,42 @@ static bool is_port_valid(const char* port) {
 	return true;
 }
 
-InitData::InitData(int argc, const char **argv) : m_valid(true) {
+InitData::InitData(int argc, const char **argv) : mValid(true) {
 	if (argc < 3) {
-		m_error = "The program can not be started with less than 2 arguments.";
-		m_valid = false;
+		mError = "The program can not be started with less than 2 arguments.";
+		mValid = false;
 		return;
 	}
-	if (!is_port_valid(argv[1])) {
-		m_error = "The supplied port was not a valid number.";
-		m_valid = false;
+	if (!isPortValid(argv[1])) {
+		mError = "The supplied port was not a valid number.";
+		mValid = false;
 		return;
 	}
 	unsigned int port;
 	std::istringstream ss(argv[1]);
 	ss >> port;
 	if (port > SHRT_MAX) {
-		m_error = "The supplied port was out of range.";
-		m_valid = false;
+		mError = "The supplied port was out of range.";
+		mValid = false;
 		return;
 	}
 
-	m_port = static_cast<unsigned short>(port);
-	m_password = argv[2];
+	mPort = static_cast<unsigned short>(port);
+	mPassword = argv[2];
 }
 
-unsigned short InitData::get_port() const {
-	return m_port;
+unsigned short InitData::getPort() const {
+	return mPort;
 }
 
-const std::string &InitData::get_password() const {
-	return m_password;
+const std::string &InitData::getPassword() const {
+	return mPassword;
 }
 
-bool InitData::is_valid() const {
-	return m_valid;
+bool InitData::isValid() const {
+	return mValid;
 }
 
-const std::string& InitData::get_error() const {
-	return m_error;
+const std::string& InitData::getError() const {
+	return mError;
 }

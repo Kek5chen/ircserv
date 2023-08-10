@@ -5,15 +5,15 @@
 struct InitData {
 	InitData(int argc, const char** argv);
 
-	unsigned short get_port() const;
-	const std::string& get_password() const;
+	unsigned short getPort() const;
+	const std::string& getPassword() const;
 
-	bool is_valid() const;
-	const std::string &get_error() const;
+	bool isValid() const;
+	const std::string &getError() const;
 
 private:
-	unsigned short m_port;
-	std::string m_password;
-	bool m_valid;
-	std::string m_error;
+	unsigned short mPort;
+	std::string mPassword;
+	bool mValid;
+	std::string mError;
 };
