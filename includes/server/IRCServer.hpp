@@ -50,6 +50,7 @@ private:
 	bool mIsBound;
 	bool mIsListening;
 	bool mShouldStop;
+	std::string mHost;
 
 	std::vector<IRCClient *> mClients;
 	IRCChannelManager mChannelManager;

@@ -37,6 +37,11 @@ IRCServer::IRCServer(unsigned short port, const std::string &password)
 	  mIsListening(false), mShouldStop(false) {
 	if (!mCmdHandlersInit)
 		initCmdHandlers();
+
+	char hostname[HOST_NAME_MAX];
+	if (gethostname(hostname, HOST_NAME_MAX) < 0)
+		throw std::runtime_error("Could not get hostname");
+	mHost = hostname;
 }
 
 IRCServer::~IRCServer() {
