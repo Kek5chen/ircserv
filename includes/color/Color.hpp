@@ -1,22 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <string>
+#define COLOR_FORMAT(text, color) (color + std::string(text) + "\033[0m")
 
-class ColorFormatter {
-public:
-	ColorFormatter(const std::string& text, const std::string& colorCode);
-	std::string format() const;
-
-private:
-	std::string mText;
-	std::string mColorCode;
-};
-
-#define RED(text) ColorFormatter(text, "\033[31m").format()
-#define GREEN(text) ColorFormatter(text, "\033[1;32m").format()
-#define YELLOW(text) ColorFormatter(text, "\033[1;33m").format()
-#define BLUE(text) ColorFormatter(text, "\033[1;34m").format()
-#define MAGENTA(text) ColorFormatter(text, "\033[1;35m").format()
-#define CYAN(text) ColorFormatter(text, "\033[1;36m").format()
-#define WHITE(text) ColorFormatter(text, "\033[1;37m").format()
+#define RED(text) COLOR_FORMAT(text, "\033[31m")
+#define GREEN(text) COLOR_FORMAT(text, "\033[1;32m")
+#define YELLOW(text) COLOR_FORMAT(text, "\033[1;33m")
+#define BLUE(text) COLOR_FORMAT(text, "\033[1;34m")
+#define MAGENTA(text) COLOR_FORMAT(text, "\033[1;35m")
+#define CYAN(text) COLOR_FORMAT(text, "\033[1;36m")
+#define WHITE(text) COLOR_FORMAT(text, "\033[1;37m")
