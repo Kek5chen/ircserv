@@ -60,8 +60,10 @@ void IRCServer::bind() {
 	socketAddr.sin_port = htons(mPort);
 	socketAddr.sin_addr.s_addr = INADDR_ANY;
 	int bindResult = ::bind(mSocketFd, reinterpret_cast<struct sockaddr *>(&socketAddr), sizeof(socketAddr));
-	if (bindResult < 0)
-		throw std::runtime_error("Socket binding failed");
+	if (bindResult < 0) {
+		close(mSocketFd);
+		throw std::runtime_error("Socket binding failed. Is there another instance of the server running?");
+	}
 	mIsBound = true;
 }
 
