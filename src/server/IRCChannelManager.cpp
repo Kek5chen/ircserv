@@ -1,4 +1,5 @@
 #include "server/IRCChannelManager.hpp"
+#include "server/IRCServer.hpp"
 
 IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 	std::string rawName = channelName;
@@ -50,20 +51,19 @@ bool IRCChannelManager::kick(
 	IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
-		return false;
+		return false; // TODO: return error code ERR_NOSUCHCHANNEL
 	if (!channel->isOperator(sender))
-		return false;
+		return false; // TODO: return error code ERR_CHANOPRIVSNEEDED
+	if (!channel->hasJoined(sender))
+		return false; // TODO: return error code ERR_NOTONCHANNEL
 	IRCClient *client = channel->getClient(userName);
 	if (!client) {
-		sender->sendResponse(":server 401 " + sender->getNickname() + " " + userName + " :No such nick/channel");
-		return false;
+		return false; // TODO: return error code ERR_NOSUCHNICK
 	}
 	if (!channel->hasJoined(client)) {
-		sender->sendResponse(":server 441 " + sender->getNickname() + " " + userName + " " + channelName +
-							 " :They aren't in this channel");
-		return false;
+		return false; // TODO: return error code ERR_USERNOTINCHANNEL
 	}
-	bool status = channel->kick(client, reason);
+	bool status = channel->kick(sender, client, reason);
 	if (!channel->getMemberCount())
 		this->remove(channel);
 	return status;
@@ -74,14 +74,14 @@ void IRCChannelManager::partFromAll(IRCClient *client) {
 		it->second->part(client);
 }
 
-void IRCChannelManager::send(const std::string &channelName, const std::string &message) {
+void IRCChannelManager::send(const std::string &channelName, const IRCCommand &message) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
 	channel->send(message);
 }
 
-void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, const std::string &message) {
+void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, const IRCCommand &message) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "IRCClient.hpp"
+#include "IRCCommand.hpp"
 
 class IRCChannel {
 public:
@@ -11,10 +12,10 @@ public:
 	bool join(IRCClient *client);
 	bool part(IRCClient *client);
 	bool partAll();
-	bool kick(IRCClient *client, const std::string &reason);
+	bool kick(IRCClient *sender, IRCClient *client, const std::string &reason);
 
-	void send(const std::string &message);
-	void send(IRCClient *sender, const std::string &message);
+	void send(const IRCCommand &message);
+	void send(IRCClient *sender, const IRCCommand &message);
 
 	bool hasJoined(IRCClient *client);
 	bool isOperator(IRCClient *client);

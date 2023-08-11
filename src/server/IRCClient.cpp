@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <sys/socket.h>
 #include <iostream>
+#include <netinet/in.h>
+#include <pcap/socket.h>
 #include "server/IRCClient.hpp"
 
 IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(false),
@@ -10,6 +12,26 @@ IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(fals
 	mIsOpen = mSocketFd >= 0;
 	mPfd.events = POLLIN | POLLOUT;
 	mPfd.fd = mSocketFd;
+
+	// ip from socket
+	sockaddr_in addr = {};
+	socklen_t addr_len = sizeof(addr);
+	if (getpeername(mSocketFd, reinterpret_cast<sockaddr *>(&addr), &addr_len) == -1) {
+		mHost = "unknown";
+		return;
+	}
+
+	// ip to hostname
+	char host[NI_MAXHOST];
+	if (getnameinfo(reinterpret_cast<sockaddr *>(&addr), addr_len, host, sizeof(host), 0, 0, 0) == -1) {
+		mHost = "unknown";
+		return;
+	}
+	mHost = host;
+
+	mBaseCommand.mPrefix.mHostname = mNickname;
+	mBaseCommand.mPrefix.mUsername = mUsername;
+	mBaseCommand.mPrefix.mHost = mHost;
 }
 
 bool IRCClient::isValid() const {
@@ -27,7 +49,7 @@ int IRCClient::getSocketFd() {
 short IRCClient::poll() {
 	this->flushResponse();
 	int changed = ::poll(&mPfd, 1, 0);
-	if (changed == -1)
+	if (changed == -1) // Monitor this error. Might be better to just disconnect the client if it's too frequent.
 		throw std::runtime_error("An error occurred while trying to handle a client");
 	if (!changed)
 		return 0;
@@ -52,10 +74,24 @@ bool IRCClient::flushResponse() {
 	return (size_t) result == mResponseBuffer.size();
 }
 
+void IRCClient::setNickname(const std::string &nick) {
+	mNickname = nick;
+	mBaseCommand.mPrefix.mHostname = mNickname;
+}
+
+void IRCClient::setUsername(const std::string &username) {
+	mUsername = username;
+	mBaseCommand.mPrefix.mUsername = mUsername;
+}
+
 const std::string &IRCClient::getNickname() {
 	return mNickname;
 }
 
 const std::string &IRCClient::getUsername() {
 	return mUsername;
+}
+
+IRCCommand IRCClient::getResponseBase() {
+	return mBaseCommand;
 }

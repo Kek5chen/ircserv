@@ -1,16 +1,18 @@
 #include <algorithm>
 #include <map>
 #include "server/IRCChannel.hpp"
+#include "server/IRCCommand.hpp"
+#include "server/IRCServer.hpp"
 
 IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator) {}
 
 bool IRCChannel::join(IRCClient *client) {
 	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end())
-		return false;
+		return false; // TODO: return error code
 	mMembers.push_back(client);
-	this->send(":" + client->getNickname() + "!" + client->getUsername() + "@127.0.0.1 JOIN :#" +
-			   mName); // TODO: Get Client Hostname
-	std::string userList = ":127.0.0.1 353 " + client->getNickname() + " = #" + mName + " :";
+	this->send(client->getResponseBase().setCommand("JOIN")
+				   .addParam("#" + mName));
+	std::string userList;
 	for (size_t i = 0; i < mMembers.size(); i++) {
 		if (this->isOperator(mMembers[i]))
 			userList += '@';
@@ -18,28 +20,34 @@ bool IRCChannel::join(IRCClient *client) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
-	client->sendResponse(userList);
-	const std::string userListEnd = ":127.0.0.1 366 " + client->getNickname() + " #" + mName + " :End of NAMES list";
-	client->sendResponse(userListEnd);
+	client->sendResponse(IRCServer::getResponseBase().setCommand(353)
+							 .addParam("#" + mName)
+							 .setEnd(userList));
+	client->sendResponse(IRCServer::getResponseBase().setCommand(366)
+							 .addParam("#" + mName)
+							 .setEnd("End of /NAMES list"));
 	return true;
 }
 
 bool IRCChannel::part(IRCClient *client) {
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
 	if (it == mMembers.end())
-		return false;
-	this->send(":" + client->getNickname() + "!" + client->getUsername() + "@127.0.0.1 PART #" +
-			   mName); // TODO: Get Client Hostname
+		return false; // TODO: return error code ERR_NEEDMOREPARAMS
+
+	this->send(client->getResponseBase().setCommand("PART")
+				   .addParam("#" + mName)); // TODO: Add reason as end
 	mMembers.erase(it);
 	return true;
 }
 
-bool IRCChannel::kick(IRCClient *client, const std::string &reason) {
+bool IRCChannel::kick(IRCClient *sender, IRCClient *client, const std::string &reason) {
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
 	if (it == mMembers.end())
-		return false;
-	this->send(":" + client->getNickname() + "!" + client->getUsername() + "@127.0.0.1 KICK #" + mName + " :" +
-			   reason); // TODO: Get Client Hostname
+		return false; // TODO: return error code ERR_NOTONCHANNEL
+	this->send(sender->getResponseBase().setCommand("KICK")
+				   .addParam("#" + mName)
+				   .addParam(client->getNickname())
+				   .setEnd(reason));
 	mMembers.erase(it);
 	return true;
 }
@@ -51,15 +59,15 @@ bool IRCChannel::partAll() {
 	return result;
 }
 
-void IRCChannel::send(const std::string &message) {
+void IRCChannel::send(const IRCCommand &message) {
 	for (size_t i = 0; i < mMembers.size(); i++)
-		mMembers[i]->sendResponse(message);
+		message.sendTo(mMembers[i]);
 }
 
-void IRCChannel::send(IRCClient *sender, const std::string &message) {
+void IRCChannel::send(IRCClient *sender, const IRCCommand &message) {
 	for (size_t i = 0; i < mMembers.size(); i++)
 		if (mMembers[i] != sender)
-			mMembers[i]->sendResponse(message);
+			message.sendTo(mMembers[i]);
 }
 
 bool IRCChannel::hasJoined(IRCClient *client) {

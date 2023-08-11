@@ -24,6 +24,8 @@ public:
 	void listen();
 	int loop();
 	void stop();
+
+	static IRCCommand getResponseBase();
 private:
 	void acceptNewClients();
 	void pollClients();
@@ -57,4 +59,5 @@ private:
 
 	static handler_map_type mCmdHandlers;
 	static bool mCmdHandlersInit;
+	static const IRCCommand mCmdBase;
 };

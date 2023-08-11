@@ -14,6 +14,7 @@
 
 bool IRCServer::mCmdHandlersInit = false;
 std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
+const IRCCommand IRCServer::mCmdBase = IRCCommand().setHostname("server");
 
 void IRCServer::initCmdHandlers() {
 	mCmdHandlers["NICK"] = &IRCServer::handleNICK;
@@ -190,21 +191,31 @@ void IRCServer::pollClients() {
 void IRCServer::handlePASS(IRCClient *client, const IRCCommand &cmd) {
 	client->mSuppliedPassword = cmd.mParams[0];
 	if (!client->hasAccess(mPassword))
-		client->sendResponse(":127.0.0.1 464 PASS :Incorrect Password");
+		client->sendResponse(IRCServer::getResponseBase().setCommand(464)
+								 .setEnd("Incorrect Password"));
 }
 
 void IRCServer::sendMotd(IRCClient *client) {
-	client->sendResponse(":127.0.0.1 001 " + client->getNickname() + " :Welcome to the ImKX IRC Server");
-	client->sendResponse(
-		":127.0.0.1 002 " + client->getNickname() + " :Your host is imkx.dev, running version " + IRC_VERSION +
-		" built on " + __DATE__ + " at " + __TIME__);
-	std::string useramount = ((std::ostringstream &) (std::ostringstream() << mClients.size())).str();
-	client->sendResponse(":127.0.0.1 251 " + client->getNickname() + " :There are " + useramount + " user(s) online");
-	client->sendResponse(":127.0.0.1 376 " + client->getNickname() + " :End of MOTD");
+	IRCServer::getResponseBase().setCommand(375)
+		.setEnd("- ft_irc (mdoll, kschmidt) Message of the day - ")
+		.sendTo(client);
+	IRCServer::getResponseBase().setCommand(372)
+		.setEnd("- Welcome to ft_irc! Your host is " + mHost + ", running version "
+															   IRC_VERSION " built on " __DATE__ " at " __TIME__)
+		.sendTo(client);
+
+	std::string userAmount = ((std::ostringstream &) (std::ostringstream() << mClients.size())).str();
+	IRCServer::getResponseBase().setCommand(251)
+		.setEnd("- There are " + userAmount + " user(s) online")
+		.sendTo(client);
+
+	IRCServer::getResponseBase().setCommand(376)
+		.setEnd("- End of /MOTD command")
+		.sendTo(client);
 }
 
 void IRCServer::handleNICK(IRCClient *client, const IRCCommand &cmd) {
-	client->mNickname = cmd.mParams[0];
+	client->setNickname(cmd.mParams[0]);
 	if (client->mIsRegistered)
 		return;
 	sendMotd(client);
@@ -212,7 +223,7 @@ void IRCServer::handleNICK(IRCClient *client, const IRCCommand &cmd) {
 }
 
 void IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
-	client->mUsername = cmd.mParams[0];
+	client->setUsername(cmd.mParams[0]);
 	if (cmd.mParams.size() > 1)
 		client->mMode = cmd.mParams[1];
 	client->mRealName = cmd.mEnd;
@@ -220,8 +231,8 @@ void IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
 
 void IRCServer::handlePING(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &add = cmd.mParams.empty() ? "" : " " + cmd.mParams[0];
-	const std::string response = "PONG" + add;
-	client->sendResponse(response);
+	client->sendResponse(IRCServer::getResponseBase().setCommand("PONG")
+							 .setEnd(add));
 }
 
 void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
@@ -239,9 +250,10 @@ void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 void IRCServer::handlePRIVMSG(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	const std::string &message = cmd.mEnd;
-	std::string response =
-		":" + client->mNickname + "!" + client->mUsername + "@127.0.0.1 PRIVMSG " + channel + " :" + message;
-	mChannelManager.send(client, channel.substr(1), response);
+	mChannelManager.send(client, channel.substr(1),
+						 client->getResponseBase().setCommand("PRIVMSG")
+							 .addParam(channel)
+							 .setEnd(message));
 }
 
 void IRCServer::handlePART(IRCClient *client, const IRCCommand &cmd) {
@@ -263,4 +275,8 @@ void IRCServer::handleKICK(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &kickMessage = cmd.mEnd;
 	mChannelManager.kick(client, channel, targetClientNick, kickMessage);
 	// TODO: WeeChat outputs "sender has kicked" and that's it. needs to be checked.
+}
+
+IRCCommand IRCServer::getResponseBase() {
+	return mCmdBase;
 }

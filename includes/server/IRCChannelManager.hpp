@@ -13,8 +13,8 @@ public:
 	bool part(const std::string &channelName, IRCClient *client);
 	bool kick(IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason);
 	void partFromAll(IRCClient *client);
-	void send(const std::string &channelName, const std::string &message);
-	void send(IRCClient *sender, const std::string &channelName, const std::string &message);
+	void send(const std::string &channelName, const IRCCommand &message);
+	void send(IRCClient *sender, const std::string &channelName, const IRCCommand &message);
 private:
 	std::map<std::string, IRCChannel *> mChannels;
 };
