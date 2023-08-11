@@ -129,6 +129,7 @@ bool IRCServer::receiveData(IRCClient *client, std::string *buffer) {
 	char preBuf[MSG_BUFFER_SIZE + 1];
 	ssize_t received;
 
+	bzero(preBuf, MSG_BUFFER_SIZE + 1);
 	received = recv(client->getSocketFd(), preBuf, MSG_BUFFER_SIZE + 1, 0);
 	if (received == -1)
 		throw std::runtime_error("An error occurred while trying to receive the sockets message.");
