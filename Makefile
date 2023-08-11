@@ -7,7 +7,7 @@ OBJ_DIR = obj
 SRC_DIR = src
 INC_DIR = includes
 
-SRC_FILES = main.cpp setup/InitData.cpp server/IRCServer.cpp server/IRCClient.cpp setup/SignalHandlers.cpp server/IRCChannelManager.cpp server/IRCChannel.cpp server/IRCCommand.cpp utils/Color.cpp
+SRC_FILES = main.cpp setup/InitData.cpp server/IRCServer.cpp server/IRCClient.cpp setup/SignalHandlers.cpp server/IRCChannelManager.cpp server/IRCChannel.cpp server/IRCCommand.cpp
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
