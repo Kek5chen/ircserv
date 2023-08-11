@@ -44,21 +44,12 @@ IRCServer::~IRCServer() {
 }
 
 void IRCServer::bind() {
-    mSocketFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (mSocketFd < 0) {
-        throw std::runtime_error("Socket creation failed");
-    }
+	mSocketFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (mSocketFd < 0)
+		throw std::runtime_error("Socket creation failed");
 
-    int flags = fcntl(mSocketFd, F_GETFL, 0);
-    if (flags == -1) {
-        throw std::runtime_error("fcntl get failed");
-    }
-
-    flags |= O_NONBLOCK;
-
-    if (fcntl(mSocketFd, F_SETFL, flags) == -1) {
-        throw std::runtime_error("fcntl set failed");
-    }
+	if (fcntl(mSocketFd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("fcntl set failed");
 
 	static const int state = 1;
 	if (setsockopt(mSocketFd, SOL_SOCKET, SO_REUSEADDR, &state, sizeof(state)) < 0)
