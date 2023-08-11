@@ -126,8 +126,8 @@ void IRCServer::acceptNewClients() {
 }
 
 bool IRCServer::receiveData(IRCClient *client, std::string *buffer) {
-	static char preBuf[MSG_BUFFER_SIZE + 1];
-	int received;
+	char preBuf[MSG_BUFFER_SIZE + 1];
+	ssize_t received;
 
 	received = recv(client->getSocketFd(), preBuf, MSG_BUFFER_SIZE + 1, 0);
 	if (received == -1)
