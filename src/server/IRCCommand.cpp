@@ -61,8 +61,8 @@ bool IRCCommand::hasPrefix() const {
 	return !mPrefix.mHostname.empty() || !mPrefix.mUsername.empty() || !mPrefix.mHost.empty();
 }
 
-void IRCCommand::sendTo(IRCClient *client) const {
-	client->sendResponse(*this);
+void IRCCommand::sendTo(IRCCommandEmitter *emitter) const {
+	emitter->send(*this);
 }
 
 std::string IRCCommand::makePrefix() const {

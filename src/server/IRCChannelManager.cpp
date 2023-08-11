@@ -78,7 +78,7 @@ void IRCChannelManager::send(const std::string &channelName, const IRCCommand &m
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
-	channel->send(message);
+	message.sendTo(channel);
 }
 
 void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, const IRCCommand &message) {

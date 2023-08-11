@@ -60,6 +60,10 @@ bool IRCClient::hasAccess(const std::string &pass) {
 	return pass.empty() || pass == mSuppliedPassword;
 }
 
+void IRCClient::send(const IRCCommand &command) {
+	this->sendResponse(command);
+}
+
 void IRCClient::sendResponse(const std::string &str) {
 	mResponseBuffer += str;
 	mResponseBuffer += '\n';

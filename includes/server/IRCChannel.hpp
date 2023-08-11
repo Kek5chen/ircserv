@@ -4,8 +4,9 @@
 #include <vector>
 #include "IRCClient.hpp"
 #include "IRCCommand.hpp"
+#include "IRCCommandEmitter.hpp"
 
-class IRCChannel {
+class IRCChannel : public IRCCommandEmitter {
 public:
 	explicit IRCChannel(std::string name, IRCClient *creator);
 

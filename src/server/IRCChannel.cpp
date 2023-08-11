@@ -10,8 +10,9 @@ bool IRCChannel::join(IRCClient *client) {
 	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end())
 		return false; // TODO: return error code
 	mMembers.push_back(client);
-	this->send(client->getResponseBase().setCommand("JOIN")
-				   .addParam("#" + mName));
+	client->getResponseBase().setCommand("JOIN")
+		.addParam("#" + mName)
+		.sendTo(this);
 	std::string userList;
 	for (size_t i = 0; i < mMembers.size(); i++) {
 		if (this->isOperator(mMembers[i]))
@@ -20,12 +21,14 @@ bool IRCChannel::join(IRCClient *client) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
-	client->sendResponse(IRCServer::getResponseBase().setCommand(353)
-							 .addParam("#" + mName)
-							 .setEnd(userList));
-	client->sendResponse(IRCServer::getResponseBase().setCommand(366)
-							 .addParam("#" + mName)
-							 .setEnd("End of /NAMES list"));
+	IRCServer::getResponseBase().setCommand(353)
+		.addParam("#" + mName)
+		.setEnd(userList)
+		.sendTo(client);
+	IRCServer::getResponseBase().setCommand(366)
+		.addParam("#" + mName)
+		.setEnd("End of /NAMES list")
+		.sendTo(client);
 	return true;
 }
 
@@ -34,8 +37,9 @@ bool IRCChannel::part(IRCClient *client) {
 	if (it == mMembers.end())
 		return false; // TODO: return error code ERR_NEEDMOREPARAMS
 
-	this->send(client->getResponseBase().setCommand("PART")
-				   .addParam("#" + mName)); // TODO: Add reason as end
+	client->getResponseBase().setCommand("PART")
+		.addParam("#" + mName)
+		.sendTo(this); // TODO: Add reason as end
 	mMembers.erase(it);
 	return true;
 }
@@ -44,10 +48,11 @@ bool IRCChannel::kick(IRCClient *sender, IRCClient *client, const std::string &r
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
 	if (it == mMembers.end())
 		return false; // TODO: return error code ERR_NOTONCHANNEL
-	this->send(sender->getResponseBase().setCommand("KICK")
-				   .addParam("#" + mName)
-				   .addParam(client->getNickname())
-				   .setEnd(reason));
+	sender->getResponseBase().setCommand("KICK")
+		.addParam("#" + mName)
+		.addParam(client->getNickname())
+		.setEnd(reason)
+		.sendTo(this);
 	mMembers.erase(it);
 	return true;
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "IRCCommandEmitter.hpp"
 
 class IRCClient;
 
@@ -11,7 +12,6 @@ public:
 	IRCCommand();
 	~IRCCommand();
 
-	std::string makePrefix() const;
 	operator std::string() const;
 
 	IRCCommand &setHostname(const std::string &hostname);
@@ -29,7 +29,11 @@ public:
 	std::vector<std::string> getParams() const;
 	std::string getEnd() const;
 
+	std::string makePrefix() const;
 	bool hasPrefix() const;
+	bool isValid() const;
+
+	void sendTo(IRCCommandEmitter *client) const;
 
 	struct {
 		std::string mHostname;
@@ -42,7 +46,4 @@ public:
 	} mCommand;
 	std::vector<std::string> mParams;
 	std::string mEnd;
-
-	bool isValid() const;
-	void sendTo(IRCClient *client) const;
 };

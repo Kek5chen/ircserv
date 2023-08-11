@@ -2,8 +2,9 @@
 
 #include <poll.h>
 #include "IRCCommand.hpp"
+#include "IRCCommandEmitter.hpp"
 
-class IRCClient {
+class IRCClient : public IRCCommandEmitter {
 	friend class IRCServer;
 
 public:
@@ -15,6 +16,7 @@ public:
 	int getSocketFd();
 	short poll();
 	IRCCommand getResponseBase();
+	void send(const IRCCommand &command);
 	void sendResponse(const std::string &str);
 	bool flushResponse();
 
