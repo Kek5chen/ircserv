@@ -1,5 +1,7 @@
 #pragma once
 
+#define LOG(x) std::cout << x << std::endl;
+
 #define COLOR_FORMAT(text, color) (color + std::string(text) + "\033[0m")
 
 #define RED(text) COLOR_FORMAT(text, "\033[31m")

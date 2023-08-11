@@ -2,29 +2,33 @@
 #include "setup/InitData.hpp"
 #include "server/IRCServer.hpp"
 #include "setup/SignalHandlers.hpp"
-#include "color/Color.hpp"
+#include "utils/Logger.hpp"
 
 int main(int argc, const char **argv) {
 	InitData initData(argc, argv);
-
 	if (!initData.isValid()) {
-		std::cout << RED("Could not initialize client.\n") << RED(initData.getError()) << std::endl;
+		LOG(RED("Could not initialize client.\n") << RED(initData.getError()));
 		return 0;
 	}
-	std::cout << YELLOW("Starting IRC Server...") << std::endl;
-	std::cout << "- Port: " << initData.getPort() << std::endl;
-	std::cout << "- Password: " << initData.getPassword() << std::endl;
 
+	LOG(YELLOW("Starting IRC Server..."));
+	LOG("- Port: " << initData.getPort());
+	LOG("- Password: " << initData.getPassword());
 	IRCServer server(initData.getPort(), initData.getPassword());
 	registerSignals(&server);
 	server.bind();
-	std::cout << GREEN("Server socket bound") << std::endl;
+	LOG(GREEN("Server socket bound"));
+
 	server.listen();
-	std::cout << "Server listening on port " << initData.getPort() << std::endl;
-	std::cout << MAGENTA("--- Start of Server Logs ---") << std::endl;
+	LOG("Server listening on port " << initData.getPort());
+
+	LOG(MAGENTA("--- Start of Server Logs ---"));
+
 	int serverExitStatus = server.loop();
-	std::cout << "Server exited with status " << serverExitStatus << std::endl;
-	std::cout << MAGENTA("--- End of Server Logs ---") << std::endl;
+
+	LOG("Server exited with status " << serverExitStatus);
+	LOG(MAGENTA("--- End of Server Logs ---"));
+
 	unregisterSignals();
 	return serverExitStatus;
 }
