@@ -69,7 +69,7 @@ bool IRCClient::flushResponse() {
 	if (mResponseBuffer.empty())
 		return true;
 	std::cout << "[OUT] " << mResponseBuffer << std::endl;
-	int result = send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
+	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
 	mResponseBuffer.clear();
 	return (size_t) result == mResponseBuffer.size();
 }
