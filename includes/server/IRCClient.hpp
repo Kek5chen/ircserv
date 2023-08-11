@@ -4,19 +4,20 @@
 
 class IRCClient {
 	friend class IRCServer;
+
 public:
 	explicit IRCClient(int socket_id);
 	~IRCClient();
 
 	bool isValid() const;
-	bool hasAccess(const std::string& pass);
+	bool hasAccess(const std::string &pass);
 	int getSocketFd();
 	short poll();
-	void sendResponse(const std::string& str);
+	void sendResponse(const std::string &str);
 	bool flushResponse();
 
-	const std::string& getNickname();
-	const std::string& getUsername();
+	const std::string &getNickname();
+	const std::string &getUsername();
 private:
 	int mSocketFd;
 	bool mIsOpen;

@@ -3,7 +3,7 @@
 #include <csignal>
 #include <cstdlib>
 
-static IRCServer* g_ctx;
+static IRCServer *g_ctx;
 
 void graceful_signal_handler(int signal) {
 	(void) signal;
@@ -11,7 +11,7 @@ void graceful_signal_handler(int signal) {
 	exit(0);
 }
 
-void registerSignals(IRCServer* ctx) {
+void registerSignals(IRCServer *ctx) {
 	g_ctx = ctx;
 	std::signal(SIGABRT, graceful_signal_handler);
 	std::signal(SIGTERM, graceful_signal_handler);

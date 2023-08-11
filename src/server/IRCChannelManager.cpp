@@ -1,6 +1,6 @@
 #include "server/IRCChannelManager.hpp"
 
-IRCChannel* IRCChannelManager::get(const std::string& channelName) {
+IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 	std::string rawName = channelName;
 	if (rawName[0] == '#')
 		rawName = rawName.substr(1);
@@ -9,15 +9,15 @@ IRCChannel* IRCChannelManager::get(const std::string& channelName) {
 	return mChannels[rawName];
 }
 
-IRCChannel* IRCChannelManager::getOrCreate(const std::string& channelName, IRCClient* requester) {
+IRCChannel *IRCChannelManager::getOrCreate(const std::string &channelName, IRCClient *requester) {
 	if (mChannels.find(channelName) == mChannels.end()) {
-		IRCChannel* channel = new IRCChannel(channelName, requester);
+		IRCChannel *channel = new IRCChannel(channelName, requester);
 		mChannels[channelName] = channel;
 	}
 	return mChannels[channelName];
 }
 
-bool IRCChannelManager::remove(IRCChannel* channel) {
+bool IRCChannelManager::remove(IRCChannel *channel) {
 	if (!channel->getMemberCount())
 		for (size_t i = 0; i < channel->getMemberCount(); i++)
 			channel->partAll();
@@ -27,15 +27,15 @@ bool IRCChannelManager::remove(IRCChannel* channel) {
 	return true;
 }
 
-bool IRCChannelManager::join(const std::string& channelName, IRCClient* client) {
-	IRCChannel* channel = this->getOrCreate(channelName, client);
+bool IRCChannelManager::join(const std::string &channelName, IRCClient *client) {
+	IRCChannel *channel = this->getOrCreate(channelName, client);
 	if (channel->hasJoined(client))
 		return false;
 	return channel->join(client);
 }
 
 bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) {
-	IRCChannel* channel = this->get(channelName);
+	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return false;
 	if (!channel->hasJoined(client))
@@ -47,21 +47,20 @@ bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) 
 }
 
 bool IRCChannelManager::kick(
-		IRCClient* sender, const std::string &channelName, const std::string &userName, const std::string &reason) {
-    IRCChannel* channel = this->get(channelName);
-    if (!channel)
-        return false;
-    if (!channel->isOperator(sender))
-        return false;
-    IRCClient* client = channel->getClient(userName);
-    if (!client)
-	{
+	IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason) {
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return false;
+	if (!channel->isOperator(sender))
+		return false;
+	IRCClient *client = channel->getClient(userName);
+	if (!client) {
 		sender->sendResponse(":server 401 " + sender->getNickname() + " " + userName + " :No such nick/channel");
 		return false;
 	}
-	if (!channel->hasJoined(client))
-	{
-		sender->sendResponse(":server 441 " + sender->getNickname() + " " + userName + " " + channelName + " :They aren't in this channel");
+	if (!channel->hasJoined(client)) {
+		sender->sendResponse(":server 441 " + sender->getNickname() + " " + userName + " " + channelName +
+							 " :They aren't in this channel");
 		return false;
 	}
 	bool status = channel->kick(client, reason);
@@ -70,20 +69,20 @@ bool IRCChannelManager::kick(
 	return status;
 }
 
-void IRCChannelManager::partFromAll(IRCClient* client) {
-	for (std::map<std::string, IRCChannel*>::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+void IRCChannelManager::partFromAll(IRCClient *client) {
+	for (std::map<std::string, IRCChannel *>::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->part(client);
 }
 
-void IRCChannelManager::send(const std::string& channelName, const std::string& message) {
-	IRCChannel* channel = this->get(channelName);
+void IRCChannelManager::send(const std::string &channelName, const std::string &message) {
+	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
 	channel->send(message);
 }
 
-void IRCChannelManager::send(IRCClient* sender, const std::string& channelName, const std::string& message) {
-	IRCChannel* channel = this->get(channelName);
+void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, const std::string &message) {
+	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
 	if (!channel->hasJoined(sender))

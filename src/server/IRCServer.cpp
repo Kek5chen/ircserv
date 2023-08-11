@@ -13,7 +13,7 @@
 #include "server/IRCClient.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
-std::map<std::string, void(IRCServer::*)(IRCClient*, const IRCCommand&)> IRCServer::mCmdHandlers;
+std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
 
 void IRCServer::initCmdHandlers() {
 	mCmdHandlers["NICK"] = &IRCServer::handleNICK;
@@ -25,14 +25,14 @@ void IRCServer::initCmdHandlers() {
 	mCmdHandlers["PRIVMSG"] = &IRCServer::handlePRIVMSG;
 	mCmdHandlers["CAP"] = &IRCServer::handleCAP;
 	mCmdHandlers["AP"] = &IRCServer::handleCAP;
-    mCmdHandlers["KICK"] = &IRCServer::handleKICK;
-    //mCmdHandlers["INVITE"] = &IRCServer::handle_INVITE;
-    //mCmdHandlers["TOPIC"] = &IRCServer::handle_TOPIC;
-    //mCmdHandlers["MODE"] = &IRCServer::handle_MODE;
+	mCmdHandlers["KICK"] = &IRCServer::handleKICK;
+	//mCmdHandlers["INVITE"] = &IRCServer::handle_INVITE;
+	//mCmdHandlers["TOPIC"] = &IRCServer::handle_TOPIC;
+	//mCmdHandlers["MODE"] = &IRCServer::handle_MODE;
 	mCmdHandlersInit = true;
 }
 
-IRCServer::IRCServer(unsigned short port, const std::string& password)
+IRCServer::IRCServer(unsigned short port, const std::string &password)
 	: mPort(port), mPassword(password), mSocketFd(0), mIsBound(false),
 	  mIsListening(false), mShouldStop(false) {
 	if (!mCmdHandlersInit)
@@ -59,7 +59,7 @@ void IRCServer::bind() {
 	socketAddr.sin_family = AF_INET;
 	socketAddr.sin_port = htons(mPort);
 	socketAddr.sin_addr.s_addr = INADDR_ANY;
-	int bindResult = ::bind(mSocketFd, reinterpret_cast<struct sockaddr*>(&socketAddr), sizeof(socketAddr));
+	int bindResult = ::bind(mSocketFd, reinterpret_cast<struct sockaddr *>(&socketAddr), sizeof(socketAddr));
 	if (bindResult < 0)
 		throw std::runtime_error("Socket binding failed");
 	mIsBound = true;
@@ -80,7 +80,7 @@ int IRCServer::loop() {
 		this->acceptNewClients();
 		this->pollClients();
 	}
-    return 0;
+	return 0;
 }
 
 void IRCServer::stop() {
@@ -103,21 +103,21 @@ void IRCServer::acceptNewClients() {
 
 	while (true) {
 		clientAddrLen = sizeof(clientAddr);
-		clientSocket = accept(mSocketFd, reinterpret_cast<struct sockaddr*>(&clientAddr), &clientAddrLen);
+		clientSocket = accept(mSocketFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
 		if (clientSocket == -1 && errno == EWOULDBLOCK)
 			return;
 		std::cout << "Received client connection" << std::endl;
-		IRCClient* client = new IRCClient(clientSocket);
+		IRCClient *client = new IRCClient(clientSocket);
 		if (!client->isValid()) {
 			delete client;
 			throw std::runtime_error(
-					std::string("Unable to accept connection."));
+				std::string("Unable to accept connection."));
 		}
 		mClients.push_back(client);
 	}
 }
 
-bool IRCServer::receiveData(IRCClient* client, std::string* buffer) {
+bool IRCServer::receiveData(IRCClient *client, std::string *buffer) {
 	static char preBuf[MSG_BUFFER_SIZE + 1];
 	int received;
 
@@ -130,7 +130,7 @@ bool IRCServer::receiveData(IRCClient* client, std::string* buffer) {
 	return true;
 }
 
-bool IRCServer::handle(IRCClient* client) {
+bool IRCServer::handle(IRCClient *client) {
 	std::string buf;
 	short revents = client->poll();
 	if (revents & POLLHUP || revents & POLLERR || revents & POLLNVAL)
@@ -140,12 +140,12 @@ bool IRCServer::handle(IRCClient* client) {
 	if (!receiveData(client, &buf))
 		return false;
 	// TODO: Make proper parser https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
-    //    ^ done, but also implement the IRCCommand with sending data, not just parsing.
+	//    ^ done, but also implement the IRCCommand with sending data, not just parsing.
 	while (!buf.empty()) {
 		size_t end = buf.find("\r\n");
 		if (end == std::string::npos)
 			break;
-        IRCCommand cmd(buf.substr(0, end + 2));
+		IRCCommand cmd(buf.substr(0, end + 2));
 		buf = buf.substr(end + 2);
 		if (!cmd.isValid())
 			continue;
@@ -180,21 +180,23 @@ void IRCServer::pollClients() {
 	}
 }
 
-void IRCServer::handlePASS(IRCClient* client, const IRCCommand& cmd) {
+void IRCServer::handlePASS(IRCClient *client, const IRCCommand &cmd) {
 	client->mSuppliedPassword = cmd.mParams[0];
 	if (!client->hasAccess(mPassword))
 		client->sendResponse(":127.0.0.1 464 PASS :Incorrect Password");
 }
 
-void IRCServer::sendMotd(IRCClient* client) {
-	client->sendResponse(":127.0.0.1 001 " + client->getNickname() +  " :Welcome to the ImKX IRC Server");
-	client->sendResponse(":127.0.0.1 002 " + client->getNickname() +  " :Your host is imkx.dev, running version " + IRC_VERSION + " built on " + __DATE__ + " at " + __TIME__);
-	std::string useramount = ((std::ostringstream&)(std::ostringstream() << mClients.size())).str();
-	client->sendResponse(":127.0.0.1 251 " + client->getNickname() +  " :There are " + useramount + " user(s) online");
+void IRCServer::sendMotd(IRCClient *client) {
+	client->sendResponse(":127.0.0.1 001 " + client->getNickname() + " :Welcome to the ImKX IRC Server");
+	client->sendResponse(
+		":127.0.0.1 002 " + client->getNickname() + " :Your host is imkx.dev, running version " + IRC_VERSION +
+		" built on " + __DATE__ + " at " + __TIME__);
+	std::string useramount = ((std::ostringstream &) (std::ostringstream() << mClients.size())).str();
+	client->sendResponse(":127.0.0.1 251 " + client->getNickname() + " :There are " + useramount + " user(s) online");
 	client->sendResponse(":127.0.0.1 376 " + client->getNickname() + " :End of MOTD");
 }
 
-void IRCServer::handleNICK(IRCClient* client, const IRCCommand& cmd) {
+void IRCServer::handleNICK(IRCClient *client, const IRCCommand &cmd) {
 	client->mNickname = cmd.mParams[0];
 	if (client->mIsRegistered)
 		return;
@@ -202,24 +204,24 @@ void IRCServer::handleNICK(IRCClient* client, const IRCCommand& cmd) {
 	client->mIsRegistered = true;
 }
 
-void IRCServer::handleUSER(IRCClient* client, const IRCCommand& cmd) {
-    client->mUsername = cmd.mParams[0];
-    if (cmd.mParams.size() > 1)
-	    client->mMode = cmd.mParams[1];
+void IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
+	client->mUsername = cmd.mParams[0];
+	if (cmd.mParams.size() > 1)
+		client->mMode = cmd.mParams[1];
 	client->mRealName = cmd.mEnd;
 }
 
-void IRCServer::handlePING(IRCClient* client, const IRCCommand& cmd) {
-    const std::string& add = cmd.mParams.empty() ? "" : " " + cmd.mParams[0];
+void IRCServer::handlePING(IRCClient *client, const IRCCommand &cmd) {
+	const std::string &add = cmd.mParams.empty() ? "" : " " + cmd.mParams[0];
 	const std::string response = "PONG" + add;
 	client->sendResponse(response);
 }
 
-void IRCServer::handleJOIN(IRCClient* client, const IRCCommand& cmd) {
-    std::string channel = cmd.mParams[0];
-    if (channel.empty()) {
-        return;
-    }
+void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
+	std::string channel = cmd.mParams[0];
+	if (channel.empty()) {
+		return;
+	}
 
 	channel = channel.substr(channel[0] == '#');
 	if (channel.empty())
@@ -227,30 +229,31 @@ void IRCServer::handleJOIN(IRCClient* client, const IRCCommand& cmd) {
 	mChannelManager.join(channel, client);
 }
 
-void IRCServer::handlePRIVMSG(IRCClient* client, const IRCCommand& cmd) {
-	const std::string& channel = cmd.mParams[0];
-	const std::string& message = cmd.mEnd;
-	std::string response = ":" + client->mNickname + "!" + client->mUsername + "@127.0.0.1 PRIVMSG " + channel + " :" + message;
+void IRCServer::handlePRIVMSG(IRCClient *client, const IRCCommand &cmd) {
+	const std::string &channel = cmd.mParams[0];
+	const std::string &message = cmd.mEnd;
+	std::string response =
+		":" + client->mNickname + "!" + client->mUsername + "@127.0.0.1 PRIVMSG " + channel + " :" + message;
 	mChannelManager.send(client, channel.substr(1), response);
 }
 
-void IRCServer::handlePART(IRCClient* client, const IRCCommand& cmd) {
-	const std::string& channel = cmd.mParams[0];
+void IRCServer::handlePART(IRCClient *client, const IRCCommand &cmd) {
+	const std::string &channel = cmd.mParams[0];
 	mChannelManager.part(channel, client);
 }
 
-void IRCServer::handleCAP(IRCClient* client, const IRCCommand& cmd) {
+void IRCServer::handleCAP(IRCClient *client, const IRCCommand &cmd) {
 	(void) client;
 	(void) cmd;
 	std::cout << "[INFO] Ignore Capability Negotiation" << std::endl;
 }
 
-void IRCServer::handleKICK(IRCClient* client, const IRCCommand& cmd) {
-    if (cmd.mParams.size() < 2)
-        return;
-    const std::string& channel = cmd.mParams[0];
-    const std::string& targetClientNick = cmd.mParams[1];
-    const std::string& kickMessage = cmd.mEnd;
-    mChannelManager.kick(client, channel, targetClientNick, kickMessage);
-    // TODO: WeeChat outputs "sender has kicked" and that's it. needs to be checked.
+void IRCServer::handleKICK(IRCClient *client, const IRCCommand &cmd) {
+	if (cmd.mParams.size() < 2)
+		return;
+	const std::string &channel = cmd.mParams[0];
+	const std::string &targetClientNick = cmd.mParams[1];
+	const std::string &kickMessage = cmd.mEnd;
+	mChannelManager.kick(client, channel, targetClientNick, kickMessage);
+	// TODO: WeeChat outputs "sender has kicked" and that's it. needs to be checked.
 }

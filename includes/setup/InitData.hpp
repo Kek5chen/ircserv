@@ -3,10 +3,10 @@
 #include <string>
 
 struct InitData {
-	InitData(int argc, const char** argv);
+	InitData(int argc, const char **argv);
 
 	unsigned short getPort() const;
-	const std::string& getPassword() const;
+	const std::string &getPassword() const;
 
 	bool isValid() const;
 	const std::string &getError() const;

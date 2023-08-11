@@ -5,7 +5,7 @@
 #include "server/IRCClient.hpp"
 
 IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(false),
-	mNickname(), mUsername(), mSuppliedPassword() {
+									  mNickname(), mUsername(), mSuppliedPassword() {
 	mSocketFd = socket_id;
 	mIsOpen = mSocketFd >= 0;
 	mPfd.events = POLLIN | POLLOUT;
@@ -49,13 +49,13 @@ bool IRCClient::flushResponse() {
 	std::cout << "[OUT] " << mResponseBuffer << std::endl;
 	int result = send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
 	mResponseBuffer.clear();
-	return (size_t)result == mResponseBuffer.size();
+	return (size_t) result == mResponseBuffer.size();
 }
 
-const std::string& IRCClient::getNickname() {
+const std::string &IRCClient::getNickname() {
 	return mNickname;
 }
 
-const std::string& IRCClient::getUsername() {
+const std::string &IRCClient::getUsername() {
 	return mUsername;
 }

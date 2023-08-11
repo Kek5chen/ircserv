@@ -3,7 +3,7 @@
 #include <climits>
 #include "setup/InitData.hpp"
 
-static bool isPortValid(const char* port) {
+static bool isPortValid(const char *port) {
 	if (!port)
 		return false;
 	while (*port) {
@@ -50,6 +50,6 @@ bool InitData::isValid() const {
 	return mValid;
 }
 
-const std::string& InitData::getError() const {
+const std::string &InitData::getError() const {
 	return mError;
 }
