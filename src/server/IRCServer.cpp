@@ -126,7 +126,7 @@ void IRCServer::acceptNewClients() {
 }
 
 bool IRCServer::receiveData(IRCClient *client, std::string *buffer) {
-	char preBuf[MSG_BUFFER_SIZE + 1] = {0};
+	char preBuf[MSG_BUFFER_SIZE + 1] = { 0 };
 	ssize_t received;
 
 	received = recv(client->getSocketFd(), preBuf, MSG_BUFFER_SIZE + 1, 0);
@@ -147,8 +147,7 @@ bool IRCServer::handle(IRCClient *client) {
 		return true;
 	if (!receiveData(client, &buf))
 		return false;
-	// TODO: Make proper parser https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
-	//    ^ done, but also implement the IRCCommand with sending data, not just parsing.
+
 	while (!buf.empty()) {
 		size_t end = buf.find("\r\n");
 		if (end == std::string::npos)
@@ -191,8 +190,9 @@ void IRCServer::pollClients() {
 void IRCServer::handlePASS(IRCClient *client, const IRCCommand &cmd) {
 	client->mSuppliedPassword = cmd.mParams[0];
 	if (!client->hasAccess(mPassword))
-		client->sendResponse(IRCServer::getResponseBase().setCommand(464)
-								 .setEnd("Incorrect Password"));
+		IRCServer::getResponseBase().setCommand(464)
+								 .setEnd("Incorrect Password")
+								 .sendTo(client);
 }
 
 void IRCServer::sendMotd(IRCClient *client) {
@@ -231,8 +231,9 @@ void IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
 
 void IRCServer::handlePING(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &add = cmd.mParams.empty() ? "" : " " + cmd.mParams[0];
-	client->sendResponse(IRCServer::getResponseBase().setCommand("PONG")
-							 .setEnd(add));
+	IRCServer::getResponseBase().setCommand("PONG")
+		.setEnd(add)
+		.sendTo(client);
 }
 
 void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
