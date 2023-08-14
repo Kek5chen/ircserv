@@ -129,6 +129,25 @@ void IRCChannel::removeOperator(const std::string &nickname) {
 		mOperators.erase(it);
 }
 
+void IRCChannel::printChannelMode() {
+	std::string mode;
+
+	if (mInviteOnly)
+		mode += 'i';
+	if (mTopicRestricted)
+		mode += 't';
+	if (!mPassword.empty())
+		mode += 'k';
+	if (mUserLimit != -1)
+		mode += 'l';
+	if (!mOperators.empty())
+		mode += 'o';
+	IRCServer::getResponseBase().setCommand(324)
+		.addParam(mName)
+		.setEnd(mode)
+		.sendTo(this);
+}
+
 
 
 

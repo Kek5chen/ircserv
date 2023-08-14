@@ -32,6 +32,7 @@ public:
 	void	setUserLimit(int userLimit);
 	void	addOperator(const std::string &nickname);
 	void	removeOperator(const std::string &nickname);
+	void	printChannelMode();
 
 private:
 	const std::string mName;

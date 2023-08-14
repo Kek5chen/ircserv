@@ -21,6 +21,7 @@ public:
 	void setUserLimit(const std::string &channelName, int userLimit);
 	void addOperator(const std::string &channelName, const std::string &nickname);
 	void removeOperator(const std::string &channelName, const std::string &nickname);
+	void printChannelMode(const std::string &channelName);
 
 private:
 	std::map<std::string, IRCChannel *> mChannels;

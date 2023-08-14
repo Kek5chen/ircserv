@@ -343,4 +343,5 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setUserLimit(channel, -1);
 	else
 		std::cout << "[INFO] MODE: invalid flag" << std::endl;
+	mChannelManager.printChannelMode(channel);
 }
