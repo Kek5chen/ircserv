@@ -89,3 +89,33 @@ void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, 
 		return;
 	channel->send(sender, message);
 }
+
+void IRCChannelManager::setInviteOnly(const std::string &channelName, bool inviteOnly) {
+	(void)channelName;
+	(void)inviteOnly;
+}
+
+void IRCChannelManager::setTopicRestriction(const std::string &channelName, bool topicRestricted) {
+	(void)channelName;
+	(void)topicRestricted;
+}
+
+void IRCChannelManager::setPassword(const std::string &channelName, const std::string &password) {
+	(void)channelName;
+	(void)password;
+}
+
+void IRCChannelManager::setUserLimit(const std::string &channelName, int userLimit) {
+	(void)channelName;
+	(void)userLimit;
+}
+
+void IRCChannelManager::addOperator(const std::string &channelName, const std::string &nickname) {
+	(void)channelName;
+	(void)nickname;
+}
+
+void IRCChannelManager::removeOperator(const std::string &channelName, const std::string &nickname) {
+	(void)channelName;
+	(void)nickname;
+}

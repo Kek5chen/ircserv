@@ -43,6 +43,7 @@ private:
 	void handlePRIVMSG(IRCClient *client, const IRCCommand &cmd);
 	void handleCAP(IRCClient *client, const IRCCommand &cmd);
 	void handleKICK(IRCClient *client, const IRCCommand &cmd);
+	void handleMODE(IRCClient *client, const IRCCommand &cmd);
 
 	static void initCmdHandlers();
 

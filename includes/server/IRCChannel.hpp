@@ -26,8 +26,20 @@ public:
 
 	IRCClient *getClient(const std::string &basicString);
 
+	//void	setInviteOnly(bool inviteOnly);
+	//void	setTopicRestriction(bool topicRestricted);
+	//void	setPassword(const std::string &password);
+	//void	setUserLimit(int userLimit);
+	//void	addOperator(const std::string &nickname);
+	//void	removeOperator(const std::string &nickname);
+
 private:
 	const std::string mName;
 	std::vector<IRCClient *> mMembers;
 	IRCClient *mCreator;
+	//ool	mInviteOnly;
+	//ool	mTopicRestricted;
+	//td::string	mPassword;
+	//td::vector<std::string>	mOperators;
+	//nt	mUserLimit;
 };
