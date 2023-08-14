@@ -4,7 +4,8 @@
 #include "server/IRCCommand.hpp"
 #include "server/IRCServer.hpp"
 
-IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator) {}
+IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
+																	mPassword(""), mUserLimit(-1){}
 
 bool IRCChannel::join(IRCClient *client) {
 	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end())
