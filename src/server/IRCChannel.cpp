@@ -100,3 +100,34 @@ IRCClient *IRCChannel::getClient(const std::string &userName) {
 			return mMembers[i];
 	return 0;
 }
+
+void IRCChannel::setInviteOnly(bool inviteOnly) {
+	mInviteOnly = inviteOnly;
+}
+
+void IRCChannel::setTopicRestriction(bool topicRestricted) {
+	mTopicRestricted = topicRestricted;
+}
+
+void IRCChannel::setPassword(const std::string &password) {
+	mPassword = password;
+}
+
+void IRCChannel::setUserLimit(int userLimit) {
+	mUserLimit = userLimit;
+}
+
+void IRCChannel::addOperator(const std::string &nickname) {
+	mOperators.push_back(nickname);
+}
+
+void IRCChannel::removeOperator(const std::string &nickname) {
+	std::vector<std::string>::iterator it = std::find(mOperators.begin(), mOperators.end(), nickname);
+
+	if (it != mOperators.end())
+		mOperators.erase(it);
+}
+
+
+
+

@@ -321,7 +321,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
 	}
 	else if (flag == "-k")
-		mChannelManager.setPassword(channel, NULL);
+		mChannelManager.setPassword(channel, "");
 	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
 			std::cout << "[INFO] MODE: missing nickname for MODE " << flag << std::endl;

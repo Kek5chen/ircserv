@@ -91,31 +91,49 @@ void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, 
 }
 
 void IRCChannelManager::setInviteOnly(const std::string &channelName, std::string flag) {
-	(void)channelName;
-	(void)flag;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	if (flag == "+i")
+		channel->setInviteOnly(true);
+	else
+		channel->setInviteOnly(false);
 }
 
 void IRCChannelManager::setTopicRestriction(const std::string &channelName, std::string flag) {
-	(void)channelName;
-	(void)flag;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	if (flag == "+t")
+		channel->setTopicRestriction(true);
+	else
+		channel->setTopicRestriction(false);
 }
 
 void IRCChannelManager::setPassword(const std::string &channelName, const std::string &password) {
-	(void)channelName;
-	(void)password;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	channel->setPassword(password);
 }
 
 void IRCChannelManager::setUserLimit(const std::string &channelName, int userLimit) {
-	(void)channelName;
-	(void)userLimit;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	channel->setUserLimit(userLimit);
 }
 
 void IRCChannelManager::addOperator(const std::string &channelName, const std::string &nickname) {
-	(void)channelName;
-	(void)nickname;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	channel->addOperator(nickname);
 }
 
 void IRCChannelManager::removeOperator(const std::string &channelName, const std::string &nickname) {
-	(void)channelName;
-	(void)nickname;
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return;
+	channel->removeOperator(nickname);
 }
