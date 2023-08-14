@@ -15,8 +15,8 @@ public:
 	void partFromAll(IRCClient *client);
 	void send(const std::string &channelName, const IRCCommand &message);
 	void send(IRCClient *sender, const std::string &channelName, const IRCCommand &message);
-	void setInviteOnly(const std::string &channelName, bool inviteOnly);
-	void setTopicRestriction(const std::string &channelName, bool topicRestricted);
+	void setInviteOnly(const std::string &channelName, std::string flag);
+	void setTopicRestriction(const std::string &channelName, std::string flag);
 	void setPassword(const std::string &channelName, const std::string &password);
 	void setUserLimit(const std::string &channelName, int userLimit);
 	void addOperator(const std::string &channelName, const std::string &nickname);

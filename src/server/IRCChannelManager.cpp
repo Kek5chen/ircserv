@@ -90,14 +90,14 @@ void IRCChannelManager::send(IRCClient *sender, const std::string &channelName, 
 	channel->send(sender, message);
 }
 
-void IRCChannelManager::setInviteOnly(const std::string &channelName, bool inviteOnly) {
+void IRCChannelManager::setInviteOnly(const std::string &channelName, std::string flag) {
 	(void)channelName;
-	(void)inviteOnly;
+	(void)flag;
 }
 
-void IRCChannelManager::setTopicRestriction(const std::string &channelName, bool topicRestricted) {
+void IRCChannelManager::setTopicRestriction(const std::string &channelName, std::string flag) {
 	(void)channelName;
-	(void)topicRestricted;
+	(void)flag;
 }
 
 void IRCChannelManager::setPassword(const std::string &channelName, const std::string &password) {

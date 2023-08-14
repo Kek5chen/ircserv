@@ -309,43 +309,35 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &flag = cmd.mParams[1];
 	const int &param_count = cmd.mParams.size();
 
-	if (flag == "+i")
-		mChannelManager.setInviteOnly(channel, true);
-	else if (flag == "-i")
-		mChannelManager.setInviteOnly(channel, false);
-	else if (flag == "+t")
-		mChannelManager.setTopicRestriction(channel, true);
-	else if (flag == "-t")
-		mChannelManager.setTopicRestriction(channel, false);
+	if (flag == "+i" || flag == "-i")
+		mChannelManager.setInviteOnly(channel, flag);
+	else if (flag == "+t" || flag == "-t")
+		mChannelManager.setTopicRestriction(channel, flag);
 	else if (flag == "+k") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing password for MODE 'k'" << std::endl;
+			std::cout << "[INFO] MODE: missing password for MODE " << flag << std::endl;
 			return;
 		}
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
 	}
 	else if (flag == "-k")
 		mChannelManager.setPassword(channel, NULL);
-	else if (flag == "+o") {
+	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing nickname for MODE 'o'" << std::endl;
+			std::cout << "[INFO] MODE: missing nickname for MODE " << flag << std::endl;
 			return;
 		}
-		mChannelManager.addOperator(channel, cmd.mParams[2]);
-	}
-	else if (flag == "-o") {
-		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing nickname for MODE 'o'" << std::endl;
-			return;
-		}
-		mChannelManager.removeOperator(channel, cmd.mParams[2]);
+		if (flag == "+o")
+			mChannelManager.addOperator(channel, cmd.mParams[2]);
+		else
+			mChannelManager.removeOperator(channel, cmd.mParams[2]);
 	}
 	else if (flag == "+l") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing user limit for MODE 'l'" << std::endl;
+			std::cout << "[INFO] MODE: missing user limit for MODE " << flag << std::endl;
 			return;
 		}
-		mChannelManager.setUserLimit(channel, std::stoi(cmd.mParams[2]));
+		mChannelManager.setUserLimit(channel, std::stoi(cmd.mParams[2])); // TODO: cpp98 compatibility
 	}
 	else if (flag == "-l")
 		mChannelManager.setUserLimit(channel, -1);
