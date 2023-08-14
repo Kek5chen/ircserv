@@ -119,7 +119,10 @@ void IRCChannel::setUserLimit(int userLimit) {
 }
 
 void IRCChannel::addOperator(const std::string &nickname) {
-	mOperators.push_back(nickname);
+	std::vector<std::string>::iterator it = std::find(mOperators.begin(), mOperators.end(), nickname);
+
+	if (it == mOperators.end())
+		mOperators.push_back(nickname);
 }
 
 void IRCChannel::removeOperator(const std::string &nickname) {
