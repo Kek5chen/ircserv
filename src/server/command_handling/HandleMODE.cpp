@@ -1,5 +1,6 @@
 #include "server/IRCServer.hpp"
 #include <iostream>
+#include "server/ServerCodeDefines.hpp"
 
 
 // TODO params: /mode <channel> <+/-> <flag> <<flag_param>>
@@ -20,7 +21,19 @@
 
 void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	if (cmd.mParams.size() < 2) {
-		std::cout << "[INFO] MODE: missing params" << std::endl;
+		IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
+			.addParam(client->getNickname())
+			.addParam(cmd.mCommand.mName)
+			.setEnd("Not enough parameters")
+			.sendTo(client);
+		return;
+	}
+	if (!mChannelManager.isOperator(cmd.mParams[0], client)) {
+		IRCServer::getResponseBase().setCommand(ERR_CHANOPRIVSNEEDED)
+			.addParam(client->getNickname())
+			.addParam(cmd.mParams[0])
+			.setEnd("You're not channel operator")
+			.sendTo(client);
 		return;
 	}
 	(void) client;

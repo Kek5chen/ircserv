@@ -22,6 +22,7 @@ public:
 	void addOperator(const std::string &channelName, const std::string &nickname);
 	void removeOperator(const std::string &channelName, const std::string &nickname);
 	void printChannelMode(const std::string &channelName);
+	bool isOperator(const std::string &channelName, IRCClient *client);
 
 private:
 	std::map<std::string, IRCChannel *> mChannels;

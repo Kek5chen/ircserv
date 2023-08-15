@@ -138,3 +138,10 @@ void IRCChannelManager::printChannelMode(const std::string &channelName) {
 		return;
 	channel->printChannelMode();
 }
+
+bool IRCChannelManager::isOperator(const std::string &channelName, IRCClient *client) {
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return false;
+	return channel->isOperator(client);
+}
