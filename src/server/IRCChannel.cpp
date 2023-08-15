@@ -5,7 +5,9 @@
 #include "server/IRCServer.hpp"
 
 IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
-																	mPassword(""), mUserLimit(-1){}
+																	mPassword(""), mUserLimit(-1) {
+	mOperators.push_back(creator->getNickname());
+}
 
 bool IRCChannel::join(IRCClient *client) {
 	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end())
@@ -84,7 +86,9 @@ bool IRCChannel::hasJoined(IRCClient *client) {
 }
 
 bool IRCChannel::isOperator(IRCClient *client) {
-	return mCreator == client;
+	if (mCreator == client || std::find(mOperators.begin(), mOperators.end(), client->getNickname()) != mOperators.end())
+		return true;
+	return false;
 }
 
 size_t IRCChannel::getMemberCount() {
