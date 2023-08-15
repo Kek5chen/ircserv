@@ -94,20 +94,14 @@ void IRCChannelManager::setInviteOnly(const std::string &channelName, std::strin
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
-	if (flag == "+i")
-		channel->setInviteOnly(true);
-	else
-		channel->setInviteOnly(false);
+	channel->setInviteOnly(flag == "+i");
 }
 
 void IRCChannelManager::setTopicRestriction(const std::string &channelName, std::string flag) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return;
-	if (flag == "+t")
-		channel->setTopicRestriction(true);
-	else
-		channel->setTopicRestriction(false);
+	channel->setTopicRestriction(flag == "+t");;
 }
 
 void IRCChannelManager::setPassword(const std::string &channelName, const std::string &password) {
