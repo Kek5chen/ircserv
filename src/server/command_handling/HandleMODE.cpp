@@ -46,7 +46,11 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setTopicRestriction(channel, flag);
 	else if (flag == "+k") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing password for MODE " << flag << std::endl;
+			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
+					.addParam(client->getNickname())
+					.addParam(cmd.mCommand.mName)
+					.setEnd("Not enough parameters")
+					.sendTo(client);
 			return;
 		}
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
@@ -55,7 +59,11 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setPassword(channel, "");
 	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing nickname for MODE " << flag << std::endl;
+			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
+					.addParam(client->getNickname())
+					.addParam(cmd.mCommand.mName)
+					.setEnd("Not enough parameters")
+					.sendTo(client);
 			return;
 		}
 		if (flag == "+o")
@@ -65,14 +73,23 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	}
 	else if (flag == "+l") {
 		if (param_count < 3) {
-			std::cout << "[INFO] MODE: missing user limit for MODE " << flag << std::endl;
+			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
+					.addParam(client->getNickname())
+					.addParam(cmd.mCommand.mName)
+					.setEnd("Not enough parameters")
+					.sendTo(client);
 			return;
 		}
 		mChannelManager.setUserLimit(channel, std::stoi(cmd.mParams[2])); // TODO: cpp98 compatibility
 	}
 	else if (flag == "-l")
 		mChannelManager.setUserLimit(channel, -1);
-	else
-		std::cout << "[INFO] MODE: invalid flag" << std::endl;
+	else {
+		IRCServer::getResponseBase().setCommand(ERR_UMODEUNKNOWNFLAG)
+				.addParam(client->getNickname())
+				.addParam(cmd.mCommand.mName)
+				.setEnd("Unknown mode flag")
+				.sendTo(client);
+	}
 	mChannelManager.printChannelMode(channel);
 }
