@@ -9,7 +9,7 @@ public:
 	IRCChannel *get(const std::string &channelName);
 	IRCChannel *getOrCreate(const std::string &channelName, IRCClient *requester);
 	bool remove(IRCChannel *channel);
-	bool join(const std::string &channelName, IRCClient *client);
+	bool join(const std::string &channelName, IRCClient *client, std::string password);
 	bool part(const std::string &channelName, IRCClient *client);
 	bool kick(IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason);
 	void partFromAll(IRCClient *client);

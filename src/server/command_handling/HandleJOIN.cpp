@@ -9,5 +9,8 @@ void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 	channel = channel.substr(channel[0] == '#');
 	if (channel.empty())
 		return;
-	mChannelManager.join(channel, client);
+	if (cmd.mParams.size() == 1)
+		mChannelManager.join(channel, client, "");
+	else if (cmd.mParams.size() >= 2)
+		mChannelManager.join(channel, client, cmd.mParams[1]);
 }

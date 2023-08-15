@@ -10,9 +10,16 @@ IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCre
 	mOperators.push_back(creator->getNickname());
 }
 
-bool IRCChannel::join(IRCClient *client) {
-	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end())
-		return false; // TODO: return error code
+bool IRCChannel::join(IRCClient *client, const std::string &password) {
+	if(!checkPermission(client, password))
+		return false;
+	if (std::find(mMembers.begin(), mMembers.end(), client) != mMembers.end()) {
+		IRCServer::getResponseBase().setCommand(ERR_USERONCHANNEL)
+			.addParam(client->getNickname())
+			.addParam("#" + mName)
+			.setEnd("is already on channel")
+			.sendTo(client);
+	}
 	mMembers.push_back(client);
 	client->getResponseBase().setCommand("JOIN")
 		.addParam("#" + mName)

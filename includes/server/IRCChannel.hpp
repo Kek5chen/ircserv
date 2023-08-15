@@ -10,7 +10,7 @@ class IRCChannel : public IRCCommandEmitter {
 public:
 	explicit IRCChannel(std::string name, IRCClient *creator);
 
-	bool join(IRCClient *client);
+	bool join(IRCClient *client, const std::string &password = "");
 	bool part(IRCClient *client);
 	bool partAll();
 	bool kick(IRCClient *sender, IRCClient *client, const std::string &reason);
@@ -33,6 +33,8 @@ public:
 	void	addOperator(const std::string &nickname);
 	void	removeOperator(const std::string &nickname);
 	void	printChannelMode();
+
+	bool	checkPermission(IRCClient *client, const std::string &password);
 
 private:
 	const std::string mName;

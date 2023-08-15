@@ -28,11 +28,11 @@ bool IRCChannelManager::remove(IRCChannel *channel) {
 	return true;
 }
 
-bool IRCChannelManager::join(const std::string &channelName, IRCClient *client) {
+bool IRCChannelManager::join(const std::string &channelName, IRCClient *client, std::string password) {
 	IRCChannel *channel = this->getOrCreate(channelName, client);
 	if (channel->hasJoined(client))
 		return false;
-	return channel->join(client);
+	return channel->join(client, password);
 }
 
 bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) {
