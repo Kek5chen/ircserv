@@ -163,6 +163,31 @@ void IRCChannel::printChannelMode() {
 		.sendTo(this);
 }
 
+bool IRCChannel::checkPermission(IRCClient *client, const std::string &password) {
+	if (mInviteOnly && !this->isOperator(client)) {
+		IRCServer::getResponseBase().setCommand(ERR_INVITEONLYCHAN)
+			.addParam("#" + mName)
+			.setEnd("Cannot join channel (+i)")
+			.sendTo(client);
+		return false;
+	}
+	if (mUserLimit != -1 && mMembers.size() >= (size_t)mUserLimit) {
+		IRCServer::getResponseBase().setCommand(ERR_CHANNELISFULL)
+			.addParam("#" + mName)
+			.setEnd("Cannot join channel (+l)")
+			.sendTo(client);
+		return false;
+	}
+	if (password != mPassword) {
+		IRCServer::getResponseBase().setCommand(ERR_BADCHANNELKEY)
+			.addParam("#" + mName)
+			.setEnd("Cannot join channel (+k)")
+			.sendTo(client);
+		return false;
+	}
+	return true;
+}
+
 
 
 
