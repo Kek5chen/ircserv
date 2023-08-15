@@ -72,7 +72,9 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 			mChannelManager.removeOperator(channel, cmd.mParams[2]); // TODO besse machen
 	}
 	else if (flag == "+l") {
-		if (param_count < 3) {
+		char* endptr;
+		long value = strtol(cmd.mParams[2].c_str(), &endptr, 10);
+		if (param_count < 3 || *endptr != '\0') {
 			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
 					.addParam(client->getNickname())
 					.addParam(cmd.mCommand.mName)
@@ -80,7 +82,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 					.sendTo(client);
 			return;
 		}
-		mChannelManager.setUserLimit(channel, std::stoi(cmd.mParams[2])); // TODO: cpp98 compatibility
+		mChannelManager.setUserLimit(channel, value);
 	}
 	else if (flag == "-l")
 		mChannelManager.setUserLimit(channel, -1);
