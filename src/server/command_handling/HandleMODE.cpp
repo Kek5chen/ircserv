@@ -36,7 +36,6 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 			.sendTo(client);
 		return;
 	}
-	(void) client;
 	const std::string &channel = cmd.mParams[0];
 	const std::string &flag = cmd.mParams[1];
 	const int &param_count = cmd.mParams.size();
