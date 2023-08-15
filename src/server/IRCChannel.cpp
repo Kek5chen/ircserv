@@ -3,6 +3,7 @@
 #include "server/IRCChannel.hpp"
 #include "server/IRCCommand.hpp"
 #include "server/IRCServer.hpp"
+#include "server/ServerCodeDefines.hpp"
 
 IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
 																	mPassword(""), mUserLimit(-1) {
@@ -24,11 +25,11 @@ bool IRCChannel::join(IRCClient *client) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
-	IRCServer::getResponseBase().setCommand(353)
+	IRCServer::getResponseBase().setCommand(RPL_NAMREPLY)
 		.addParam("#" + mName)
 		.setEnd(userList)
 		.sendTo(client);
-	IRCServer::getResponseBase().setCommand(366)
+	IRCServer::getResponseBase().setCommand(RPL_ENDOFNAMES)
 		.addParam("#" + mName)
 		.setEnd("End of /NAMES list")
 		.sendTo(client);
@@ -149,7 +150,7 @@ void IRCChannel::printChannelMode() {
 		mode += 'l';
 	if (!mOperators.empty())
 		mode += 'o';
-	IRCServer::getResponseBase().setCommand(324)
+	IRCServer::getResponseBase().setCommand(RPL_CHANNELMODEIS)
 		.addParam(mName)
 		.setEnd(mode)
 		.sendTo(this);
