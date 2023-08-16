@@ -1,5 +1,4 @@
 #include "server/IRCServer.hpp"
-#include <iostream>
 #include "server/ServerCodeDefines.hpp"
 
 
@@ -19,21 +18,38 @@
 // TODO	// no rights?
 // TODO	// flag already set
 
-void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
-	if (cmd.mParams.size() < 2) {
-		IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
+static void sendMoreParamsError(IRCClient *client, const IRCCommand &cmd) {
+	IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
 			.addParam(client->getNickname())
 			.addParam(cmd.mCommand.mName)
 			.setEnd("Not enough parameters")
 			.sendTo(client);
-		return;
-	}
-	if (!mChannelManager.isOperator(cmd.mParams[0], client)) {
-		IRCServer::getResponseBase().setCommand(ERR_CHANOPRIVSNEEDED)
+}
+
+static void sendNoOpError(IRCClient *client, const IRCCommand &cmd) {
+	IRCServer::getResponseBase().setCommand(ERR_CHANOPRIVSNEEDED)
 			.addParam(client->getNickname())
 			.addParam(cmd.mParams[0])
 			.setEnd("You're not channel operator")
 			.sendTo(client);
+}
+
+static void sendUnknownFlag(IRCClient *client, const IRCCommand &cmd) {
+	IRCServer::getResponseBase().setCommand(ERR_UMODEUNKNOWNFLAG)
+			.addParam(client->getNickname())
+			.addParam(cmd.mCommand.mName)
+			.setEnd("Unknown mode flag")
+			.sendTo(client);
+}
+
+
+void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
+	if (cmd.mParams.size() < 2) {
+		sendMoreParamsError(client, cmd);
+		return;
+	}
+	if (!mChannelManager.isOperator(cmd.mParams[0], client)) {
+		sendNoOpError(client, cmd);
 		return;
 	}
 	const std::string &channel = cmd.mParams[0];
@@ -46,11 +62,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setTopicRestriction(channel, flag);
 	else if (flag == "+k") {
 		if (param_count < 3) {
-			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
-					.addParam(client->getNickname())
-					.addParam(cmd.mCommand.mName)
-					.setEnd("Not enough parameters")
-					.sendTo(client);
+			sendMoreParamsError(client, cmd);
 			return;
 		}
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
@@ -59,27 +71,19 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setPassword(channel, "");
 	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
-			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
-					.addParam(client->getNickname())
-					.addParam(cmd.mCommand.mName)
-					.setEnd("Not enough parameters")
-					.sendTo(client);
+			sendMoreParamsError(client, cmd);
 			return;
 		}
 		if (flag == "+o")
 			mChannelManager.addOperator(channel, cmd.mParams[2]);
 		else
-			mChannelManager.removeOperator(channel, cmd.mParams[2]); // TODO besse machen
+			mChannelManager.removeOperator(channel, cmd.mParams[2]);
 	}
 	else if (flag == "+l") {
 		char* endptr;
 		long value = strtol(cmd.mParams[2].c_str(), &endptr, 10);
 		if (param_count < 3 || *endptr != '\0') {
-			IRCServer::getResponseBase().setCommand(ERR_NEEDMOREPARAMS)
-					.addParam(client->getNickname())
-					.addParam(cmd.mCommand.mName)
-					.setEnd("Not enough parameters")
-					.sendTo(client);
+			sendMoreParamsError(client, cmd);
 			return;
 		}
 		mChannelManager.setUserLimit(channel, value);
@@ -87,11 +91,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else if (flag == "-l")
 		mChannelManager.setUserLimit(channel, -1);
 	else {
-		IRCServer::getResponseBase().setCommand(ERR_UMODEUNKNOWNFLAG)
-				.addParam(client->getNickname())
-				.addParam(cmd.mCommand.mName)
-				.setEnd("Unknown mode flag")
-				.sendTo(client);
+		sendUnknownFlag(client, cmd);
 	}
 	mChannelManager.printChannelMode(channel);
 }
