@@ -46,6 +46,7 @@ private:
 	void handleCAP(IRCClient *client, const IRCCommand &cmd);
 	void handleKICK(IRCClient *client, const IRCCommand &cmd);
 	void handleMODE(IRCClient *client, const IRCCommand &cmd);
+	void handleINVITE(IRCClient *client, const IRCCommand &cmd);
 	void handleWHO(IRCClient *client, const IRCCommand &cmd);
 
 	static void sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code, std::string msg);

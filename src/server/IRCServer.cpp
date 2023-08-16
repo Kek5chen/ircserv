@@ -30,7 +30,7 @@ void IRCServer::initCmdHandlers() {
 	mCmdHandlers["CAP"] = &IRCServer::handleCAP;
 	mCmdHandlers["AP"] = &IRCServer::handleCAP;
 	mCmdHandlers["KICK"] = &IRCServer::handleKICK;
-	//mCmdHandlers["INVITE"] = &IRCServer::handle_INVITE;
+	mCmdHandlers["INVITE"] = &IRCServer::handleINVITE;
 	//mCmdHandlers["TOPIC"] = &IRCServer::handle_TOPIC;
 	mCmdHandlers["MODE"] = &IRCServer::handleMODE;
 	mCmdHandlers["WHO"] = &IRCServer::handleWHO;
