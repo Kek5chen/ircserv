@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "server/IRCServer.hpp"
 #include "server/ServerCodeDefines.hpp"
 
@@ -64,7 +65,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	}
 	else if (flag == "+l") {
 		char* endptr;
-		long value = strtol(cmd.mParams[2].c_str(), &endptr, 10);
+		long value = std::strtol(cmd.mParams[2].c_str(), &endptr, 10);
 		if (param_count < 3 || *endptr != '\0') {
 			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
 			return;
