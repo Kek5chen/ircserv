@@ -5,6 +5,7 @@ void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 	if (channel.empty()) {
 		return;
 	}
+	// TODO: channel might be comma separated list of channels
 
 	channel = channel.substr(channel[0] == '#');
 	if (channel.empty())

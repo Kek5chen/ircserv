@@ -28,6 +28,8 @@ static void sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code,
 }
 
 void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
+	// TODO: [IN] MODE #test
+	//       [OUT] :server 461 kx MODE :Not enough parameters
 	if (cmd.mParams.size() < 2) {
 		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
 		return;
