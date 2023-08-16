@@ -1,5 +1,5 @@
 #include "server/IRCServer.hpp"
-#include "server/ServerCodeDefines.hpp"
+#include "server/CodeDefines.hpp"
 
 bool isMatchRecursive(const std::string &s, const std::string &p, size_t i, size_t j) {
 	// When the pattern is exhausted

@@ -3,7 +3,7 @@
 #include "server/IRCChannel.hpp"
 #include "server/IRCCommand.hpp"
 #include "server/IRCServer.hpp"
-#include "server/ServerCodeDefines.hpp"
+#include "server/CodeDefines.hpp"
 #include "utils/FuckCast.hpp"
 
 IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),

@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include "server/IRCServer.hpp"
-#include "server/ServerCodeDefines.hpp"
+#include "server/CodeDefines.hpp"
 
 
 // TODO params: /mode <channel> <+/-> <flag> <<flag_param>>
