@@ -15,7 +15,7 @@
 
 bool IRCServer::mCmdHandlersInit = false;
 std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
-const IRCCommand IRCServer::mCmdBase = IRCCommand().setHostname("server");
+IRCServer *IRCServer::lastInstance = 0;
 
 void IRCServer::initCmdHandlers() {
 	mCmdHandlers["NICK"] = &IRCServer::handleNICK;
@@ -31,7 +31,7 @@ void IRCServer::initCmdHandlers() {
 	//mCmdHandlers["INVITE"] = &IRCServer::handle_INVITE;
 	//mCmdHandlers["TOPIC"] = &IRCServer::handle_TOPIC;
 	mCmdHandlers["MODE"] = &IRCServer::handleMODE;
-	//mCmdHandlers["WHO"] = &IRCServer::handle_WHO;
+	mCmdHandlers["WHO"] = &IRCServer::handleWHO;
 	mCmdHandlersInit = true;
 }
 
@@ -41,10 +41,10 @@ IRCServer::IRCServer(unsigned short port, const std::string &password)
 	if (!mCmdHandlersInit)
 		initCmdHandlers();
 
-	char hostname[_POSIX_HOST_NAME_MAX];
-	if (gethostname(hostname, _POSIX_HOST_NAME_MAX) < 0)
-		throw std::runtime_error("Could not get hostname");
-	mHost = hostname;
+	// get host ip
+	mHost = "127.0.0.1";
+	mCmdBase.mPrefix.mHostname = mHost;
+	lastInstance = this;
 }
 
 IRCServer::~IRCServer() {
@@ -205,10 +205,17 @@ void IRCServer::sendMotd(IRCClient *client) {
 		.sendTo(client);
 
 	IRCServer::getResponseBase().setCommand(376)
-		.setEnd("- End of /MOTD command")
+		.addParam(client->getNickname())
+		.setEnd("End of MOTD command")
 		.sendTo(client);
 }
 
 IRCCommand IRCServer::getResponseBase() {
-	return mCmdBase;
+	if (!lastInstance)
+		throw std::runtime_error("No instance of IRCServer available");
+	return lastInstance->mCmdBase;
+}
+
+const std::string &IRCServer::getHostname() {
+	return mHost;
 }

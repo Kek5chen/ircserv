@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
-#include "server/IRCClient.hpp"
+#include <algorithm>
 
 static int ft_stol(const std::string &str) {
 	std::istringstream iss(str);
@@ -32,7 +32,8 @@ IRCCommand::IRCCommand(const std::string &cmd) {
 	}
 
 	// Command
-	mCommand.mName = str;
+	mCommand.mName.resize(str.size());
+	std::transform(str.begin(), str.end(), mCommand.mName.begin(), ::toupper);
 	mCommand.mCode = ft_stol(mCommand.mName);
 
 	// Parameters

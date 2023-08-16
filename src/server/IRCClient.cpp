@@ -90,14 +90,22 @@ void IRCClient::setUsername(const std::string &username) {
 	mBaseCommand.mPrefix.mUsername = mUsername;
 }
 
-const std::string &IRCClient::getNickname() {
+const std::string &IRCClient::getNickname() const {
 	return mNickname;
 }
 
-const std::string &IRCClient::getUsername() {
+const std::string &IRCClient::getUsername() const {
 	return mUsername;
 }
 
-IRCCommand IRCClient::getResponseBase() {
+IRCCommand IRCClient::getResponseBase() const {
 	return mBaseCommand;
+}
+
+const std::string &IRCClient::getHostname() const {
+	return mHost;
+}
+
+const std::string &IRCClient::getRealName() const {
+	return mRealName;
 }

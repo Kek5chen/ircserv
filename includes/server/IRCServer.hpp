@@ -26,6 +26,7 @@ public:
 	void stop();
 
 	static IRCCommand getResponseBase();
+	const std::string &getHostname();
 private:
 	void acceptNewClients();
 	void pollClients();
@@ -44,6 +45,7 @@ private:
 	void handleCAP(IRCClient *client, const IRCCommand &cmd);
 	void handleKICK(IRCClient *client, const IRCCommand &cmd);
 	void handleMODE(IRCClient *client, const IRCCommand &cmd);
+	void handleWHO(IRCClient *client, const IRCCommand &cmd);
 
 	static void initCmdHandlers();
 
@@ -54,11 +56,12 @@ private:
 	bool mIsListening;
 	bool mShouldStop;
 	std::string mHost;
+	IRCCommand mCmdBase;
 
 	std::vector<IRCClient *> mClients;
 	IRCChannelManager mChannelManager;
 
 	static handler_map_type mCmdHandlers;
 	static bool mCmdHandlersInit;
-	static const IRCCommand mCmdBase;
+	static IRCServer *lastInstance;
 };

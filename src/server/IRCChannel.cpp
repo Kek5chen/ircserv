@@ -4,6 +4,7 @@
 #include "server/IRCCommand.hpp"
 #include "server/IRCServer.hpp"
 #include "server/ServerCodeDefines.hpp"
+#include "utils/FuckCast.hpp"
 
 IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
 																	mPassword(""), mUserLimit(-1) {
@@ -33,12 +34,14 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 			userList += ' ';
 	}
 	IRCServer::getResponseBase().setCommand(RPL_NAMREPLY)
+		.addParam(client->getNickname())
+		.addParam("=")
 		.addParam("#" + mName)
 		.setEnd(userList)
 		.sendTo(client);
 	IRCServer::getResponseBase().setCommand(RPL_ENDOFNAMES)
 		.addParam("#" + mName)
-		.setEnd("End of /NAMES list")
+		.setEnd("End of NAMES list")
 		.sendTo(client);
 	return true;
 }
@@ -86,24 +89,24 @@ void IRCChannel::send(IRCClient *sender, const IRCCommand &message) {
 			message.sendTo(mMembers[i]);
 }
 
-bool IRCChannel::hasJoined(IRCClient *client) {
+bool IRCChannel::hasJoined(const IRCClient *client) const {
 	for (size_t i = 0; i < mMembers.size(); i++)
 		if (mMembers[i] == client)
 			return true;
 	return false;
 }
 
-bool IRCChannel::isOperator(IRCClient *client) {
+bool IRCChannel::isOperator(const IRCClient *client) const {
 	if (mCreator == client || std::find(mOperators.begin(), mOperators.end(), client->getNickname()) != mOperators.end())
 		return true;
 	return false;
 }
 
-size_t IRCChannel::getMemberCount() {
+size_t IRCChannel::getMemberCount() const {
 	return mMembers.size();
 }
 
-const std::string &IRCChannel::getName() {
+const std::string &IRCChannel::getName() const {
 	return mName;
 }
 
@@ -188,6 +191,6 @@ bool IRCChannel::checkPermission(IRCClient *client, const std::string &password)
 	return true;
 }
 
-
-
-
+const std::vector<const IRCClient *> &IRCChannel::getClients() const {
+	return std::fuck_cast<const std::vector<const IRCClient *> >(mMembers);
+}

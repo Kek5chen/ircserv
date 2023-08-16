@@ -15,7 +15,6 @@ public:
 	bool hasAccess(const std::string &pass);
 	int getSocketFd();
 	short poll();
-	IRCCommand getResponseBase();
 	void send(const IRCCommand &command);
 	void sendResponse(const std::string &str);
 	bool flushResponse();
@@ -23,8 +22,11 @@ public:
 	void setNickname(const std::string &nick);
 	void setUsername(const std::string &username);
 
-	const std::string &getNickname();
-	const std::string &getUsername();
+	const std::string &getNickname() const;
+	const std::string &getUsername() const;
+	const std::string &getHostname() const;
+	const std::string &getRealName() const;
+	IRCCommand getResponseBase() const;
 private:
 	int mSocketFd;
 	bool mIsOpen;

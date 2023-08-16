@@ -18,11 +18,12 @@ public:
 	void send(const IRCCommand &message);
 	void send(IRCClient *sender, const IRCCommand &message);
 
-	bool hasJoined(IRCClient *client);
-	bool isOperator(IRCClient *client);
+	bool hasJoined(const IRCClient *client) const;
+	bool isOperator(const IRCClient *client) const;
+	const std::vector<const IRCClient *> &getClients() const;
 
-	const std::string &getName();
-	size_t getMemberCount();
+	const std::string &getName() const;
+	size_t getMemberCount() const;
 
 	IRCClient *getClient(const std::string &basicString);
 

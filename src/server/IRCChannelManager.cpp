@@ -1,5 +1,6 @@
 #include "server/IRCChannelManager.hpp"
 #include "server/IRCServer.hpp"
+#include "utils/FuckCast.hpp"
 
 IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 	std::string rawName = channelName;
@@ -144,4 +145,8 @@ bool IRCChannelManager::isOperator(const std::string &channelName, IRCClient *cl
 	if (!channel)
 		return false;
 	return channel->isOperator(client);
+}
+
+const std::map<std::string, const IRCChannel *> &IRCChannelManager::getChannels() {
+	return std::fuck_cast<const std::map<std::string, const IRCChannel *> >(mChannels);
 }

@@ -7,7 +7,25 @@ OBJ_DIR = obj
 SRC_DIR = src
 INC_DIR = includes
 
-SRC_FILES = main.cpp setup/InitData.cpp server/IRCServer.cpp server/IRCClient.cpp setup/SignalHandlers.cpp server/IRCChannelManager.cpp server/IRCChannel.cpp server/IRCCommand.cpp server/command_handling/HandleCAP.cpp server/command_handling/HandleJOIN.cpp server/command_handling/HandleKICK.cpp server/command_handling/HandleMODE.cpp server/command_handling/HandleNICK.cpp server/command_handling/HandlePART.cpp server/command_handling/HandlePASS.cpp server/command_handling/HandlePING.cpp server/command_handling/HandlePRIVMSG.cpp server/command_handling/HandleUSER.cpp
+SRC_FILES = main.cpp setup/InitData.cpp \
+			server/IRCServer.cpp \
+			server/IRCClient.cpp \
+			setup/SignalHandlers.cpp \
+			server/IRCChannelManager.cpp \
+			server/IRCChannel.cpp \
+			server/IRCCommand.cpp \
+			server/command_handling/HandleCAP.cpp \
+			server/command_handling/HandleJOIN.cpp \
+			server/command_handling/HandleKICK.cpp \
+			server/command_handling/HandleMODE.cpp \
+			server/command_handling/HandleNICK.cpp \
+			server/command_handling/HandlePART.cpp \
+			server/command_handling/HandlePASS.cpp \
+			server/command_handling/HandlePING.cpp \
+			server/command_handling/HandlePRIVMSG.cpp \
+			server/command_handling/HandleUSER.cpp \
+			server/command_handling/HandleWHO.cpp
+
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
