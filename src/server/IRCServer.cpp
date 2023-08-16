@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
+#include "utils/Logger.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
 std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
@@ -115,7 +116,7 @@ void IRCServer::acceptNewClients() {
 		clientSocket = accept(mSocketFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
 		if (clientSocket == -1 && errno == EWOULDBLOCK)
 			return;
-		std::cout << "Received client connection" << std::endl;
+		LOG("Received client connection");
 		IRCClient *client = new IRCClient(clientSocket);
 		if (!client->isValid()) {
 			delete client;
@@ -154,6 +155,7 @@ bool IRCServer::handle(IRCClient *client) {
 		if (end == std::string::npos)
 			break;
 		IRCCommand cmd(buf.substr(0, end + 2));
+		LOG("[IN] " << (std::string)cmd);
 		buf = buf.substr(end + 2);
 		if (!cmd.isValid())
 			continue;
@@ -162,9 +164,9 @@ bool IRCServer::handle(IRCClient *client) {
 			return false;
 		handler_map_type::iterator cmdIt = mCmdHandlers.find(cmd.mCommand.mName);
 		if (cmdIt == mCmdHandlers.end()) {
-			std::cout << "[IN] === NOT IMPLEMENTED ===" << std::endl;
-			std::cout << "[IN] " << cmd.mCommand.mName << std::endl;
-			std::cout << "[IN] ===      ====       ===" << std::endl;
+			LOG("[IN] === NOT IMPLEMENTED ===");
+			LOG("[IN] " << cmd.mCommand.mName);
+			LOG("[IN] ===      ====       ===");
 			continue;
 		}
 		if (cmd.mCommand.mName != "PASS" && !client->hasAccess(mPassword))
@@ -179,7 +181,7 @@ void IRCServer::pollClients() {
 		bool keepConnection = this->handle(mClients[i]);
 		if (keepConnection)
 			continue;
-		std::cout << "[INFO] Client disconnected" << std::endl;
+		LOG("[INFO] Client disconnected");
 		mChannelManager.partFromAll(mClients[i]);
 		mClients[i]->flushResponse();
 		delete mClients[i];

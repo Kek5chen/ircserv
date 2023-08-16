@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <pcap/socket.h>
 #include "server/IRCClient.hpp"
+#include "utils/Logger.hpp"
 
 IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(false),
 									  mNickname(), mUsername(), mSuppliedPassword() {
@@ -72,7 +73,8 @@ void IRCClient::sendResponse(const std::string &str) {
 bool IRCClient::flushResponse() {
 	if (mResponseBuffer.empty())
 		return true;
-	std::cout << "[OUT] " << mResponseBuffer << std::endl;
+
+	LOG("[OUT] " << mResponseBuffer);
 	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
 	mResponseBuffer.clear();
 	return (size_t) result == mResponseBuffer.size();
