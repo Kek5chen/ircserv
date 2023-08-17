@@ -30,7 +30,7 @@ void IRCServer::initCmdHandlers() {
 	mCmdHandlers["CAP"] = &IRCServer::handleCAP;
 	mCmdHandlers["AP"] = &IRCServer::handleCAP;
 	mCmdHandlers["KICK"] = &IRCServer::handleKICK;
-	//mCmdHandlers["INVITE"] = &IRCServer::handle_INVITE;
+	mCmdHandlers["INVITE"] = &IRCServer::handleINVITE;
 	//mCmdHandlers["TOPIC"] = &IRCServer::handle_TOPIC;
 	mCmdHandlers["MODE"] = &IRCServer::handleMODE;
 	mCmdHandlers["WHO"] = &IRCServer::handleWHO;
@@ -225,4 +225,12 @@ const std::string &IRCServer::getHostname() {
 
 const std::vector<const IRCClient *> &IRCServer::getClients() const {
 	return std::fuck_cast<const std::vector<const IRCClient *> >(mClients);
+}
+
+void IRCServer::sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code, std::string msg) {
+	IRCServer::getResponseBase().setCommand(code)
+			.addParam(client->getNickname())
+			.addParam(cmd.mCommand.mName)
+			.setEnd(msg)
+			.sendTo(client);
 }

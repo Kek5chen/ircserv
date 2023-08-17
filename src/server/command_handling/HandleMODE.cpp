@@ -19,14 +19,6 @@
 // TODO	// no rights?
 // TODO	// flag already set
 
-static void sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code, std::string msg) {
-	IRCServer::getResponseBase().setCommand(code)
-			.addParam(client->getNickname())
-			.addParam(cmd.mCommand.mName)
-			.setEnd(msg)
-			.sendTo(client);
-}
-
 void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	// TODO: [IN] MODE #test
 	//       [OUT] :server 461 kx MODE :Not enough parameters

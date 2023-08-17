@@ -39,6 +39,8 @@ public:
 
 	bool	checkPermission(IRCClient *client, const std::string &password);
 
+	void	addInvitedUser(const std::string &nickname);
+
 private:
 	const std::string mName;
 	std::vector<IRCClient *> mMembers;
@@ -48,4 +50,5 @@ private:
 	std::string	mPassword;
 	std::vector<std::string>	mOperators;
 	int	mUserLimit;
+	std::vector<std::string>	mInvitedUsers;
 };
