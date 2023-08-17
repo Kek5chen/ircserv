@@ -179,6 +179,7 @@ bool IRCServer::handle(IRCClient *client) {
 void IRCServer::pollClients() {
 	for (size_t i = 0; i < mClients.size(); i++) {
 		bool keepConnection = this->handle(mClients[i]);
+		mClients[i]->mIsOpen = keepConnection;
 		if (keepConnection)
 			continue;
 		LOG("[INFO] Client disconnected");
