@@ -155,7 +155,7 @@ bool IRCServer::handle(IRCClient *client) {
 		if (end == std::string::npos)
 			break;
 		IRCCommand cmd(buf.substr(0, end + 2));
-		LOG("[IN] " << (std::string)cmd);
+		LOG(CYAN("[IN] ") << CYAN((std::string)cmd));
 		buf = buf.substr(end + 2);
 		if (!cmd.isValid())
 			continue;
@@ -164,9 +164,9 @@ bool IRCServer::handle(IRCClient *client) {
 			return false;
 		handler_map_type::iterator cmdIt = mCmdHandlers.find(cmd.mCommand.mName);
 		if (cmdIt == mCmdHandlers.end()) {
-			LOG("[IN] === NOT IMPLEMENTED ===");
-			LOG("[IN] " << cmd.mCommand.mName);
-			LOG("[IN] ===      ====       ===");
+			LOG(YELLOW("[IN] === NOT IMPLEMENTED ==="));
+			LOG(YELLOW("[IN] ") << YELLOW(cmd.mCommand.mName));
+			LOG(YELLOW("[IN] ===      ====       ==="));
 			continue;
 		}
 		if (cmd.mCommand.mName != "PASS" && !client->hasAccess(mPassword))
