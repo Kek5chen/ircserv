@@ -20,8 +20,8 @@ bool isMatchRecursive(const std::string &s, const std::string &p, size_t i, size
 void IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &name = cmd.mParams[0];
 	const bool &o = cmd.mParams.size() > 1 && cmd.mParams[1] == "o";
-	const std::map<std::string, const IRCChannel *> &channels = mChannelManager.getChannels();
 	const IRCChannel *channel = mChannelManager.get(name);
+	const std::vector<const IRCClient *> &clients = client->getServer()->getClients();
 
 	if (channel) {
 		for (std::vector<const IRCClient *>::const_iterator client2 = channel->getClients().begin();
@@ -42,30 +42,22 @@ void IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 				.sendTo(client);
 		}
 	} else {
-		for (std::map<std::basic_string<char>, const IRCChannel *>::const_iterator it = channels.begin();
-			 it != channels.end(); ++it) {
-			const IRCChannel *channel = it->second;
-			if (isMatchRecursive(channel->getName(), name, 0, 0)) {
-				for (std::vector<const IRCClient *>::const_iterator client2 = channel->getClients().begin();
-					 client2 != channel->getClients().end(); ++client2) {
-					if (o && !channel->isOperator(*client2))
-						continue;
-					// TODO: if client is not invisible
-					IRCServer::getResponseBase().setCommand(RPL_WHOREPLY)
-						.addParam(client->getNickname())
-						.addParam("#" + channel->getName())
-						.addParam((*client2)->getUsername())
-						.addParam((*client2)->getHostname())
-						.addParam(IRCServer::getHostname())
-						.addParam(client->getNickname())
-						.addParam("H")
-						.setEnd("0 " + (*client2)->getRealName())
-						.sendTo(client);
-				}
-			}
+		for (std::vector<const IRCClient *>::const_iterator client2 = clients.begin();
+			 client2 != clients.end(); ++client2) {
+			// TODO: check if server operator
+			// TODO: if client is not invisible
+			IRCServer::getResponseBase().setCommand(RPL_WHOREPLY)
+				.addParam(client->getNickname())
+				.addParam("#server")
+				.addParam((*client2)->getUsername())
+				.addParam((*client2)->getHostname())
+				.addParam(IRCServer::getHostname())
+				.addParam(client->getNickname())
+				.addParam("H")
+				.setEnd("0 " + (*client2)->getRealName())
+				.sendTo(client);
 		}
 	}
-
 	IRCServer::getResponseBase().setCommand(RPL_ENDOFWHO)
 		.addParam(client->getNickname())
 		.addParam(name)

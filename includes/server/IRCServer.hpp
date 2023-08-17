@@ -27,6 +27,7 @@ public:
 
 	static IRCCommand getResponseBase();
 	const std::string &getHostname();
+	const std::vector<const IRCClient *> &getClients() const;
 private:
 	void acceptNewClients();
 	void pollClients();

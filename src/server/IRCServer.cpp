@@ -13,6 +13,7 @@
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
 #include "server/CodeDefines.hpp"
+#include "utils/FuckCast.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
 std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
@@ -220,4 +221,8 @@ IRCCommand IRCServer::getResponseBase() {
 
 const std::string &IRCServer::getHostname() {
 	return mHost;
+}
+
+const std::vector<const IRCClient *> &IRCServer::getClients() const {
+	return std::fuck_cast<const std::vector<const IRCClient *> >(mClients);
 }
