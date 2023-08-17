@@ -12,6 +12,7 @@
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
+#include "server/CodeDefines.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
 std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
@@ -192,20 +193,20 @@ void IRCServer::pollClients() {
 }
 
 void IRCServer::sendMotd(IRCClient *client) {
-	IRCServer::getResponseBase().setCommand(375)
+	IRCServer::getResponseBase().setCommand(RPL_MOTDSTART)
 		.setEnd("- ft_irc (mdoll, kschmidt) Message of the day - ")
 		.sendTo(client);
-	IRCServer::getResponseBase().setCommand(372)
+	IRCServer::getResponseBase().setCommand(RPL_MOTD)
 		.setEnd("- Welcome to ft_irc! Your host is " + mHost + ", running version "
 															   IRC_VERSION " built on " __DATE__ " at " __TIME__)
 		.sendTo(client);
 
 	std::string userAmount = ((std::ostringstream &) (std::ostringstream() << mClients.size())).str();
-	IRCServer::getResponseBase().setCommand(251)
+	IRCServer::getResponseBase().setCommand(RPL_LUSERCLIENT)
 		.setEnd("- There are " + userAmount + " user(s) online")
 		.sendTo(client);
 
-	IRCServer::getResponseBase().setCommand(376)
+	IRCServer::getResponseBase().setCommand(RPL_ENDOFMOTD)
 		.addParam(client->getNickname())
 		.setEnd("End of MOTD command")
 		.sendTo(client);
