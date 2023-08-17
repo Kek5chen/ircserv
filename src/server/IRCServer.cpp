@@ -38,7 +38,7 @@ void IRCServer::initCmdHandlers() {
 
 IRCServer::IRCServer(unsigned short port, const std::string &password)
 	: mPort(port), mPassword(password), mSocketFd(0), mIsBound(false),
-	  mIsListening(false), mShouldStop(false) {
+	  mIsListening(false), mShouldStop(false), mChannelManager(this) {
 	if (!mCmdHandlersInit)
 		initCmdHandlers();
 
@@ -118,7 +118,7 @@ void IRCServer::acceptNewClients() {
 		if (clientSocket == -1 && errno == EWOULDBLOCK)
 			return;
 		LOG("Received client connection");
-		IRCClient *client = new IRCClient(clientSocket);
+		IRCClient *client = new IRCClient(this, clientSocket);
 		if (!client->isValid()) {
 			delete client;
 			throw std::runtime_error(

@@ -2,6 +2,8 @@
 #include "server/IRCServer.hpp"
 #include "utils/FuckCast.hpp"
 
+IRCChannelManager::IRCChannelManager(IRCServer *owningServer) : IIRCServerOwned(owningServer) {}
+
 IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 	std::string rawName = channelName;
 	if (rawName[0] == '#')
@@ -13,7 +15,7 @@ IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 
 IRCChannel *IRCChannelManager::getOrCreate(const std::string &channelName, IRCClient *requester) {
 	if (mChannels.find(channelName) == mChannels.end()) {
-		IRCChannel *channel = new IRCChannel(channelName, requester);
+		IRCChannel *channel = new IRCChannel(getServer(), channelName, requester);
 		mChannels[channelName] = channel;
 	}
 	return mChannels[channelName];

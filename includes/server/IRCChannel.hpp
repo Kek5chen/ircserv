@@ -6,9 +6,11 @@
 #include "IRCCommand.hpp"
 #include "IRCCommandEmitter.hpp"
 
-class IRCChannel : public IRCCommandEmitter {
+class IRCServer;
+
+class IRCChannel : public IRCCommandEmitter, public IIRCServerOwned {
 public:
-	explicit IRCChannel(std::string name, IRCClient *creator);
+	explicit IRCChannel(IRCServer *owningServer, std::string name, IRCClient *creator);
 
 	bool join(IRCClient *client, const std::string &password = "");
 	bool part(IRCClient *client);

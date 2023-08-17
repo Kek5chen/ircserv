@@ -4,8 +4,9 @@
 #include <map>
 #include "IRCChannel.hpp"
 
-class IRCChannelManager {
+class IRCChannelManager : IIRCServerOwned {
 public:
+	IRCChannelManager(IRCServer *owningServer);
 	IRCChannel *get(const std::string &channelName);
 	IRCChannel *getOrCreate(const std::string &channelName, IRCClient *requester);
 

@@ -3,12 +3,13 @@
 #include <poll.h>
 #include "IRCCommand.hpp"
 #include "IRCCommandEmitter.hpp"
+#include "IIRCServerOwned.hpp"
 
-class IRCClient : public IRCCommandEmitter {
+class IRCClient : public IRCCommandEmitter, public IIRCServerOwned {
 	friend class IRCServer;
 
 public:
-	explicit IRCClient(int socket_id);
+	explicit IRCClient(IRCServer *owningServer, int socket_id);
 	~IRCClient();
 
 	bool isValid() const;

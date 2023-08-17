@@ -7,8 +7,8 @@
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
 
-IRCClient::IRCClient(int socket_id) : mIsOpen(false), mPfd(), mIsRegistered(false),
-									  mNickname(), mUsername(), mSuppliedPassword() {
+IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(), mIsRegistered(false),
+															   mNickname(), mUsername(), mSuppliedPassword() {
 	mSocketFd = socket_id;
 	mIsOpen = mSocketFd >= 0;
 	mPfd.events = POLLIN | POLLOUT;

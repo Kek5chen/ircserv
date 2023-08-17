@@ -24,7 +24,8 @@ SRC_FILES = main.cpp setup/InitData.cpp \
 			server/command_handling/HandlePING.cpp \
 			server/command_handling/HandlePRIVMSG.cpp \
 			server/command_handling/HandleUSER.cpp \
-			server/command_handling/HandleWHO.cpp
+			server/command_handling/HandleWHO.cpp \
+			server/IIRCServerOwned.cpp \
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)

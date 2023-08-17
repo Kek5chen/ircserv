@@ -6,8 +6,9 @@
 #include "server/CodeDefines.hpp"
 #include "utils/FuckCast.hpp"
 
-IRCChannel::IRCChannel(std::string name, IRCClient *creator) : mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
-																	mPassword(""), mUserLimit(-1) {
+IRCChannel::IRCChannel(IRCServer *owningServer, std::string name, IRCClient *creator)
+	: IIRCServerOwned(owningServer), mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
+	  mPassword(""), mUserLimit(-1) {
 	mOperators.push_back(creator->getNickname());
 }
 
