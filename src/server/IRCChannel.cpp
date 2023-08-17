@@ -168,12 +168,8 @@ void IRCChannel::printChannelMode() {
 }
 
 bool IRCChannel::checkPermission(IRCClient *client, const std::string &password) {
-	if (!this->isOperator(client)) {
-		IRCServer::getResponseBase().setCommand(ERR_INVITEONLYCHAN)
-			.addParam("#" + mName)
-			.setEnd("Cannot join channel (+i)")
-			.sendTo(client);
-		return false;
+	if (this->isOperator(client)) {
+		return true;
 	}
 	if (mUserLimit != -1 && mMembers.size() >= (size_t)mUserLimit) {
 		IRCServer::getResponseBase().setCommand(ERR_CHANNELISFULL)
