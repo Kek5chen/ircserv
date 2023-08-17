@@ -168,7 +168,7 @@ void IRCChannel::printChannelMode() {
 }
 
 bool IRCChannel::checkPermission(IRCClient *client, const std::string &password) {
-	if (mInviteOnly && !this->isOperator(client)) {
+	if (!this->isOperator(client)) {
 		IRCServer::getResponseBase().setCommand(ERR_INVITEONLYCHAN)
 			.addParam("#" + mName)
 			.setEnd("Cannot join channel (+i)")
@@ -188,6 +188,16 @@ bool IRCChannel::checkPermission(IRCClient *client, const std::string &password)
 			.setEnd("Cannot join channel (+k)")
 			.sendTo(client);
 		return false;
+	}
+	if (mInviteOnly) {
+		std::vector<std::string>::iterator it = std::find(mInvitedUsers.begin(), mInvitedUsers.end(), client->getNickname());
+		if (it == mInvitedUsers.end()) {
+			IRCServer::getResponseBase().setCommand(ERR_INVITEONLYCHAN)
+				.addParam("#" + mName)
+				.setEnd("Cannot join channel (+i)")
+				.sendTo(client);
+			return false;
+		}
 	}
 	return true;
 }
