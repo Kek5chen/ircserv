@@ -135,11 +135,12 @@ void IRCChannelManager::removeOperator(const std::string &channelName, const std
 	channel->removeOperator(nickname);
 }
 
-void IRCChannelManager::printChannelMode(const std::string &channelName) {
+bool IRCChannelManager::printChannelMode(const std::string &channelName) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
-		return;
+		return false;
 	channel->printChannelMode();
+    return true;
 }
 
 bool IRCChannelManager::isOperator(const std::string &channelName, IRCClient *client) {

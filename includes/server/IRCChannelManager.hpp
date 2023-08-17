@@ -27,7 +27,7 @@ public:
 
 	const std::map<std::string, const IRCChannel *> &getChannels();
 
-	void printChannelMode(const std::string &channelName);
+	bool printChannelMode(const std::string &channelName);
 
 	bool isOperator(const std::string &channelName, IRCClient *client);
 

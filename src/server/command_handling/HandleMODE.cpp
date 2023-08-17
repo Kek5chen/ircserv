@@ -20,12 +20,17 @@
 // TODO	// flag already set
 
 void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
-	// TODO: [IN] MODE #test
-	//       [OUT] :server 461 kx MODE :Not enough parameters
-
 	// TODO: [IN] MODE #hi +v kx
 	//       [OUT] :127.0.0.1 501 kx MODE :Unknown mode flag
 	if (cmd.mParams.size() < 2) {
+		if (cmd.mParams.size() == 1) {
+			if (!mChannelManager.printChannelMode(cmd.mParams[0])) {
+				sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, cmd.mParams[0] + " :No such channel");
+				return;
+			}
+			else
+				return;
+        }
 		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
 		return;
 	}
