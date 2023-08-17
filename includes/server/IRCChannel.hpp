@@ -27,7 +27,7 @@ public:
 	const std::string &getName() const;
 	size_t getMemberCount() const;
 
-	IRCClient *getClient(const std::string &basicString);
+	IRCClient *getClient(const std::string &userName);
 
 	void	setInviteOnly(bool inviteOnly);
 	void	setTopicRestriction(bool topicRestricted);
