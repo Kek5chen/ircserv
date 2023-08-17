@@ -73,6 +73,9 @@ void IRCClient::sendResponse(const std::string &str) {
 bool IRCClient::flushResponse() {
 	if (mResponseBuffer.empty())
 		return true;
+	if (!mIsOpen) {
+		return false;
+	}
 
 	LOG("[OUT] " << mResponseBuffer);
 	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
