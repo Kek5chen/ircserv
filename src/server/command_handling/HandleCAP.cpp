@@ -5,5 +5,5 @@
 void IRCServer::handleCAP(IRCClient *client, const IRCCommand &cmd) {
 	(void) client;
 	(void) cmd;
-	LOG("[INFO] Ignore Capability Negotiation");
+	LOG(YELLOW("[WARN] Ignore Capability Negotiation"));
 }
