@@ -63,6 +63,4 @@ void IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 		.addParam(name)
 		.setEnd("End of WHO list")
 		.sendTo(client);
-
-	// TODO: Idk if this works
 }
