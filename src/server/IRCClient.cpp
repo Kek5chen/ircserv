@@ -77,8 +77,10 @@ bool IRCClient::flushResponse() {
 		return false;
 	}
 
-	LOG("[OUT] " << mResponseBuffer);
 	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), 0);
+	if (result == -1)
+		return false;
+	LOG(BLUE("[OUT] ") << BLUE(mResponseBuffer));
 	mResponseBuffer.clear();
 	return (size_t) result == mResponseBuffer.size();
 }
