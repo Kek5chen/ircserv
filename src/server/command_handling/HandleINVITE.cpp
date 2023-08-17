@@ -1,4 +1,4 @@
-#include "server/ServerCodeDefines.hpp"
+#include "server/CodeDefines.hpp"
 #include "server/IRCServer.hpp"
 #include <algorithm>
 
@@ -31,8 +31,11 @@ void IRCServer::handleINVITE(IRCClient *client, const IRCCommand &cmd) {
 		sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, channel + " :No such channel");
 		return;
 	}
-	// check if member is already on channel
-	// update invited-user list for channel
+	if (chan->hasJoined(*it)) {
+		sendErrorMessage(client, cmd, ERR_USERONCHANNEL, invitee + " #" + channel + " :is already on channel");
+		return;
+	}
+	chan->addInvitedUser(invitee);
 	client->getResponseBase().setCommand("INVITE")
 		.addParam(invitee)
 		.addParam(channel)
