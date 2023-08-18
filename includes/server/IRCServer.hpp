@@ -17,7 +17,7 @@ typedef std::map<std::string, bool (IRCServer::*)(IRCClient *, const IRCCommand 
 
 class IRCServer {
 public:
-	explicit IRCServer(unsigned short port, const std::string &password = "");
+	explicit IRCServer(unsigned short port, const std::string &password = "", const std::string &ip = "0.0.0.0");
 	~IRCServer();
 
 	void bind();

@@ -14,7 +14,7 @@ int main(int argc, const char **argv) {
 	LOG(YELLOW("Starting IRC Server..."));
 	LOG("- Port: " << initData.getPort());
 	LOG("- Password: " << initData.getPassword());
-	IRCServer server(initData.getPort(), initData.getPassword());
+	IRCServer server(initData.getPort(), initData.getPassword(), initData.getIp());
 	registerSignals(&server);
 	server.bind();
 	LOG(GREEN("Server socket bound"));

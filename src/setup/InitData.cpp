@@ -1,7 +1,7 @@
-#include <stdexcept>
 #include <sstream>
 #include <climits>
 #include "setup/InitData.hpp"
+#include <utils/Logger.hpp>
 
 static bool isPortValid(const char *port) {
 	if (!port)
@@ -15,8 +15,8 @@ static bool isPortValid(const char *port) {
 }
 
 InitData::InitData(int argc, const char **argv) : mValid(true) {
-	if (argc < 3) {
-		mError = "The program can not be started with less than 2 arguments.";
+	if (argc < 2) {
+		mError = RED("Error: Syntax: <port> [<password>] [<ip>].");
 		mValid = false;
 		return;
 	}
@@ -36,6 +36,7 @@ InitData::InitData(int argc, const char **argv) : mValid(true) {
 
 	mPort = static_cast<unsigned short>(port);
 	mPassword = argv[2];
+	mIp = argc > 3 ? argv[3] : "0.0.0.0";
 }
 
 unsigned short InitData::getPort() const {
@@ -44,6 +45,10 @@ unsigned short InitData::getPort() const {
 
 const std::string &InitData::getPassword() const {
 	return mPassword;
+}
+
+const std::string &InitData::getIp() const {
+	return mIp;
 }
 
 bool InitData::isValid() const {

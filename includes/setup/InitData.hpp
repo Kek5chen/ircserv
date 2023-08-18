@@ -7,6 +7,7 @@ struct InitData {
 
 	unsigned short getPort() const;
 	const std::string &getPassword() const;
+	const std::string &getIp() const;
 
 	bool isValid() const;
 	const std::string &getError() const;
@@ -14,6 +15,7 @@ struct InitData {
 private:
 	unsigned short mPort;
 	std::string mPassword;
+	std::string mIp;
 	bool mValid;
 	std::string mError;
 };

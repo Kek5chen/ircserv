@@ -39,14 +39,13 @@ void IRCServer::initCmdHandlers() {
 	mCmdHandlersInit = true;
 }
 
-IRCServer::IRCServer(unsigned short port, const std::string &password)
+IRCServer::IRCServer(unsigned short port, const std::string &password, const std::string &ip)
 	: mPort(port), mPassword(password), mSocketFd(0), mIsBound(false),
-	  mIsListening(false), mShouldStop(false), mChannelManager(this) {
+	  mIsListening(false), mShouldStop(false), mHost(ip), mChannelManager(this) {
 	if (!mCmdHandlersInit)
 		initCmdHandlers();
 
-	// get host ip
-	mHost = "127.0.0.1";
+	mHost = ip;
 	mCmdBase.mPrefix.mHostname = mHost;
 	lastInstance = this;
 }
@@ -77,18 +76,6 @@ void IRCServer::bind() {
 		throw std::runtime_error("Socket binding failed. Is there another instance of the server running?");
 	}
 
-	// get ip
-	sockaddr_in actual_addr = {};
-	socklen_t addr_len;
-	if (getsockname(mSocketFd, (struct sockaddr *)&actual_addr, &addr_len) == -1) {
-		close(mSocketFd);
-		throw std::runtime_error("Could not get IP that the socket is bound to");
-	}
-
-	char ip[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &(actual_addr.sin_addr), ip, INET_ADDRSTRLEN);
-	mHost = ip;
-	mCmdBase.mPrefix.mHostname = mHost;
 	mIsBound = true;
 }
 
@@ -223,7 +210,7 @@ void IRCServer::sendMotd(IRCClient *client) {
 
 	IRCServer::getResponseBase().setCommand(RPL_ENDOFMOTD)
 		.addParam(client->getNickname())
-		.setEnd("End of MOTD command")
+		.setEnd("End of MOTD")
 		.sendTo(client);
 }
 
