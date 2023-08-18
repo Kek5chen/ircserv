@@ -20,7 +20,7 @@ handler_map_type IRCServer::mCmdHandlers;
 IRCServer *IRCServer::lastInstance = 0;
 
 void IRCServer::initCmdHandlers() {
-	mCmdHandlers["QUIT"] = &IRCServer::handleNICK;
+	mCmdHandlers["QUIT"] = &IRCServer::handleQUIT;
 	mCmdHandlers["NICK"] = &IRCServer::handleNICK;
 	mCmdHandlers["PASS"] = &IRCServer::handlePASS;
 	mCmdHandlers["USER"] = &IRCServer::handleUSER;
