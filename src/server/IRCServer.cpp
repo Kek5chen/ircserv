@@ -170,8 +170,6 @@ bool IRCServer::handle(IRCClient *client) {
 			LOG(YELLOW("[IN] ===      ====       ==="));
 			continue;
 		}
-		if (cmd.mCommand.mName != "PASS" && !client->hasAccess(mPassword))
-			return false;
 		return (this->*(cmdIt->second))(client, cmd);
 	}
 	return true;
@@ -232,4 +230,8 @@ void IRCServer::sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int c
 			.addParam(cmd.mCommand.mName)
 			.setEnd(msg)
 			.sendTo(client);
+}
+
+const std::string &IRCServer::getPassword() {
+	return mPassword;
 }

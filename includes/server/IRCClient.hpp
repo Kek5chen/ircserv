@@ -13,7 +13,7 @@ public:
 	~IRCClient();
 
 	bool isValid() const;
-	bool hasAccess(const std::string &pass);
+	bool hasAccess() const;
 	int getSocketFd();
 	short poll();
 	void send(const IRCCommand &command);

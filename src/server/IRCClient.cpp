@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
+#include "server/IRCServer.hpp"
 
 IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(), mIsRegistered(false),
 															   mNickname(), mUsername(), mSuppliedPassword(),
@@ -58,8 +59,9 @@ short IRCClient::poll() {
 	return mPfd.revents;
 }
 
-bool IRCClient::hasAccess(const std::string &pass) {
-	return pass.empty() || pass == mSuppliedPassword;
+bool IRCClient::hasAccess() const{
+	const std::string &password = getServer()->getPassword();;
+	return password.empty() || password == mSuppliedPassword;
 }
 
 void IRCClient::send(const IRCCommand &command) {
