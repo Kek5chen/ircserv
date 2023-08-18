@@ -39,6 +39,11 @@ bool IRCServer::handleINVITE(IRCClient *client, const IRCCommand &cmd) {
 	client->getResponseBase().setCommand("INVITE")
 		.addParam(invitee)
 		.addParam(channel)
+		.sendTo(*it);
+	client->getResponseBase().setCommand(RPL_INVITING)
+		.addParam(client->getNickname())
+		.addParam(invitee)
+		.addParam(channel)
 		.sendTo(client);
 	return true;
 }
