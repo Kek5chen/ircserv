@@ -185,7 +185,7 @@ void IRCServer::pollClients() {
 		if (keepConnection)
 			continue;
 		LOG("[INFO] Client disconnected");
-		mChannelManager.partFromAll(mClients[i]);
+		mChannelManager.partFromAll(mClients[i], "Client disconnected");
 		mClients[i]->flushResponse();
 		delete mClients[i];
 		mClients.erase(std::remove(mClients.begin(), mClients.end(), mClients[i]), mClients.end());

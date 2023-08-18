@@ -13,8 +13,8 @@ public:
 	explicit IRCChannel(IRCServer *owningServer, std::string name, IRCClient *creator);
 
 	bool join(IRCClient *client, const std::string &password = "");
-	bool part(IRCClient *client);
-	bool partAll();
+	bool part(IRCClient *client, const std::string &reason);
+	bool partAll(const std::string &reason);
 	bool kick(IRCClient *sender, IRCClient *client, const std::string &reason);
 
 	void send(const IRCCommand &message);

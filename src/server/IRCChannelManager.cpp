@@ -13,6 +13,12 @@ IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 	return mChannels[rawName];
 }
 
+IRCChannelManager::~IRCChannelManager() {
+	for (std::map<std::string, IRCChannel *>::iterator it = mChannels.begin(); it != mChannels.end(); it++) {
+		it->second->partAll("Shutting down");
+	}
+}
+
 IRCChannel *IRCChannelManager::getOrCreate(const std::string &channelName, IRCClient *requester) {
 	if (mChannels.find(channelName) == mChannels.end()) {
 		IRCChannel *channel = new IRCChannel(getServer(), channelName, requester);
@@ -24,7 +30,7 @@ IRCChannel *IRCChannelManager::getOrCreate(const std::string &channelName, IRCCl
 bool IRCChannelManager::remove(IRCChannel *channel) {
 	if (!channel->getMemberCount())
 		for (size_t i = 0; i < channel->getMemberCount(); i++)
-			channel->partAll();
+			channel->partAll("Channel Empty");
 	if (!mChannels.erase(channel->getName()))
 		return false;
 	delete channel;
@@ -38,13 +44,13 @@ bool IRCChannelManager::join(const std::string &channelName, IRCClient *client, 
 	return channel->join(client, password);
 }
 
-bool IRCChannelManager::part(const std::string &channelName, IRCClient *client) {
+bool IRCChannelManager::part(IRCClient *client, const std::string &channelName, const std::string &reason) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return false;
 	if (!channel->hasJoined(client))
 		return false;
-	bool result = channel->part(client);
+	bool result = channel->part(client, reason);
 	if (!channel->getMemberCount())
 		this->remove(channel);
 	return result;
@@ -72,9 +78,9 @@ bool IRCChannelManager::kick(
 	return status;
 }
 
-void IRCChannelManager::partFromAll(IRCClient *client) {
+void IRCChannelManager::partFromAll(IRCClient *client, const std::string &reason) {
 	for (std::map<std::string, IRCChannel *>::iterator it = mChannels.begin(); it != mChannels.end(); it++)
-		it->second->part(client);
+		it->second->part(client, reason);
 }
 
 void IRCChannelManager::send(const std::string &channelName, const IRCCommand &message) {

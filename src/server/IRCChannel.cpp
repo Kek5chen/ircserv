@@ -47,14 +47,15 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 	return true;
 }
 
-bool IRCChannel::part(IRCClient *client) {
+bool IRCChannel::part(IRCClient *client, const std::string &reason) {
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
 	if (it == mMembers.end())
 		return false; // TODO: return error code ERR_NEEDMOREPARAMS
 
 	client->getResponseBase().setCommand("PART")
 		.addParam("#" + mName)
-		.sendTo(this); // TODO: Add reason as end
+		.setEnd(reason)
+		.sendTo(this);
 	mMembers.erase(it);
 	return true;
 }
@@ -72,10 +73,10 @@ bool IRCChannel::kick(IRCClient *sender, IRCClient *client, const std::string &r
 	return true;
 }
 
-bool IRCChannel::partAll() {
+bool IRCChannel::partAll(const std::string &reason) {
 	bool result = true;
 	for (std::vector<IRCClient *>::iterator it = mMembers.begin(); it < mMembers.end(); it++)
-		this->part(*it);
+		this->part(*it, reason);
 	return result;
 }
 

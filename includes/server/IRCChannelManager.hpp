@@ -6,15 +6,16 @@
 
 class IRCChannelManager : IIRCServerOwned {
 public:
-	IRCChannelManager(IRCServer *owningServer);
+	explicit IRCChannelManager(IRCServer *owningServer);
+	~IRCChannelManager();
 	IRCChannel *get(const std::string &channelName);
 	IRCChannel *getOrCreate(const std::string &channelName, IRCClient *requester);
 
 	bool remove(IRCChannel *channel);
 	bool join(const std::string &channelName, IRCClient *client, std::string password);
-	bool part(const std::string &channelName, IRCClient *client);
+	bool part(IRCClient *client, const std::string &channelName, const std::string &reason);
 	bool kick(IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason);
-	void partFromAll(IRCClient *client);
+	void partFromAll(IRCClient *client, const std::string &reason);
 	void send(const std::string &channelName, const IRCCommand &message);
 	void send(IRCClient *sender, const std::string &channelName, const IRCCommand &message);
 
