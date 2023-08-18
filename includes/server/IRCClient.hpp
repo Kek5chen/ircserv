@@ -42,4 +42,5 @@ private:
 	std::string mRealName;
 	std::string mHost;
 	IRCCommand mBaseCommand;
+	std::string mQuitReason;
 };

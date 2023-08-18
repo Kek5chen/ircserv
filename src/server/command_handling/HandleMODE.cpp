@@ -19,24 +19,24 @@
 // TODO	// no rights?
 // TODO	// flag already set
 
-void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
+bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	// TODO: [IN] MODE #hi +v kx
 	//       [OUT] :127.0.0.1 501 kx MODE :Unknown mode flag
 	if (cmd.mParams.size() < 2) {
 		if (cmd.mParams.size() == 1) {
 			if (!mChannelManager.printChannelMode(cmd.mParams[0])) {
 				sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, cmd.mParams[0] + " :No such channel");
-				return;
+				return true;
 			}
 			else
-				return;
+				return true;
         }
 		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
-		return;
+		return true;
 	}
 	if (!mChannelManager.isOperator(cmd.mParams[0], client)) {
 		sendErrorMessage(client, cmd, ERR_CHANOPRIVSNEEDED, "You're not channel operator");
-		return;
+		return true;
 	}
 	const std::string &channel = cmd.mParams[0];
 	const std::string &flag = cmd.mParams[1];
@@ -49,7 +49,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else if (flag == "+k") {
 		if (param_count < 3) {
 			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
-			return;
+			return true;
 		}
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
 	}
@@ -58,7 +58,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
 			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
-			return;
+			return true;
 		}
 		if (flag == "+o")
 			mChannelManager.addOperator(channel, cmd.mParams[2]);
@@ -70,7 +70,7 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		long value = std::strtol(cmd.mParams[2].c_str(), &endptr, 10);
 		if (param_count < 3 || *endptr != '\0') {
 			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
-			return;
+			return true;
 		}
 		mChannelManager.setUserLimit(channel, value);
 	}
@@ -80,4 +80,5 @@ void IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		sendErrorMessage(client, cmd, ERR_UMODEUNKNOWNFLAG, "Unknown mode flag");
 	}
 	mChannelManager.printChannelMode(channel);
+	return true;
 }

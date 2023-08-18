@@ -13,7 +13,7 @@
 
 class IRCServer;
 
-typedef std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> handler_map_type;
+typedef std::map<std::string, bool (IRCServer::*)(IRCClient *, const IRCCommand &)> handler_map_type;
 
 class IRCServer {
 public:
@@ -36,18 +36,19 @@ private:
 
 	void sendMotd(IRCClient *client);
 
-	void handlePASS(IRCClient *client, const IRCCommand &cmd);
-	void handleNICK(IRCClient *client, const IRCCommand &cmd);
-	void handleUSER(IRCClient *client, const IRCCommand &cmd);
-	void handlePING(IRCClient *client, const IRCCommand &cmd);
-	void handleJOIN(IRCClient *client, const IRCCommand &cmd);
-	void handlePART(IRCClient *client, const IRCCommand &cmd);
-	void handlePRIVMSG(IRCClient *client, const IRCCommand &cmd);
-	void handleCAP(IRCClient *client, const IRCCommand &cmd);
-	void handleKICK(IRCClient *client, const IRCCommand &cmd);
-	void handleMODE(IRCClient *client, const IRCCommand &cmd);
-	void handleINVITE(IRCClient *client, const IRCCommand &cmd);
-	void handleWHO(IRCClient *client, const IRCCommand &cmd);
+	bool handleQUIT(IRCClient *client, const IRCCommand &cmd);
+	bool handlePASS(IRCClient *client, const IRCCommand &cmd);
+	bool handleNICK(IRCClient *client, const IRCCommand &cmd);
+	bool handleUSER(IRCClient *client, const IRCCommand &cmd);
+	bool handlePING(IRCClient *client, const IRCCommand &cmd);
+	bool handleJOIN(IRCClient *client, const IRCCommand &cmd);
+	bool handlePART(IRCClient *client, const IRCCommand &cmd);
+	bool handlePRIVMSG(IRCClient *client, const IRCCommand &cmd);
+	bool handleCAP(IRCClient *client, const IRCCommand &cmd);
+	bool handleKICK(IRCClient *client, const IRCCommand &cmd);
+	bool handleMODE(IRCClient *client, const IRCCommand &cmd);
+	bool handleINVITE(IRCClient *client, const IRCCommand &cmd);
+	bool handleWHO(IRCClient *client, const IRCCommand &cmd);
 
 	static void sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code, std::string msg);
 

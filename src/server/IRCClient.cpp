@@ -3,12 +3,13 @@
 #include <sys/socket.h>
 #include <iostream>
 #include <netinet/in.h>
-#include <pcap/socket.h>
+#include <netdb.h>
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
 
 IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(), mIsRegistered(false),
-															   mNickname(), mUsername(), mSuppliedPassword() {
+															   mNickname(), mUsername(), mSuppliedPassword(),
+															   mQuitReason("Client disconnected") {
 	mSocketFd = socket_id;
 	mIsOpen = mSocketFd >= 0;
 	mPfd.events = POLLIN | POLLOUT;

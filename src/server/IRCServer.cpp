@@ -16,10 +16,11 @@
 #include "utils/FuckCast.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
-std::map<std::string, void (IRCServer::*)(IRCClient *, const IRCCommand &)> IRCServer::mCmdHandlers;
+handler_map_type IRCServer::mCmdHandlers;
 IRCServer *IRCServer::lastInstance = 0;
 
 void IRCServer::initCmdHandlers() {
+	mCmdHandlers["QUIT"] = &IRCServer::handleNICK;
 	mCmdHandlers["NICK"] = &IRCServer::handleNICK;
 	mCmdHandlers["PASS"] = &IRCServer::handlePASS;
 	mCmdHandlers["USER"] = &IRCServer::handleUSER;
@@ -162,8 +163,6 @@ bool IRCServer::handle(IRCClient *client) {
 		if (!cmd.isValid())
 			continue;
 
-		if (cmd.mCommand.mName == "QUIT")
-			return false;
 		handler_map_type::iterator cmdIt = mCmdHandlers.find(cmd.mCommand.mName);
 		if (cmdIt == mCmdHandlers.end()) {
 			LOG(YELLOW("[IN] === NOT IMPLEMENTED ==="));
@@ -173,7 +172,7 @@ bool IRCServer::handle(IRCClient *client) {
 		}
 		if (cmd.mCommand.mName != "PASS" && !client->hasAccess(mPassword))
 			return false;
-		(this->*(cmdIt->second))(client, cmd);
+		return (this->*(cmdIt->second))(client, cmd);
 	}
 	return true;
 }
@@ -185,7 +184,7 @@ void IRCServer::pollClients() {
 		if (keepConnection)
 			continue;
 		LOG("[INFO] Client disconnected");
-		mChannelManager.partFromAll(mClients[i], "Client disconnected");
+		mChannelManager.partFromAll(mClients[i], mClients[i]->mQuitReason);
 		mClients[i]->flushResponse();
 		delete mClients[i];
 		mClients.erase(std::remove(mClients.begin(), mClients.end(), mClients[i]), mClients.end());

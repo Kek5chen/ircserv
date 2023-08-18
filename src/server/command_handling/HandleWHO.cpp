@@ -17,7 +17,7 @@ bool isMatchRecursive(const std::string &s, const std::string &p, size_t i, size
 	}
 }
 
-void IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
+bool IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &name = cmd.mParams[0];
 	const bool &o = cmd.mParams.size() > 1 && cmd.mParams[1] == "o";
 	const IRCChannel *channel = mChannelManager.get(name);
@@ -63,4 +63,5 @@ void IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 		.addParam(name)
 		.setEnd("End of WHO list")
 		.sendTo(client);
+	return true;
 }

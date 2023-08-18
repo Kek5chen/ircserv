@@ -1,9 +1,9 @@
 #include "server/IRCServer.hpp"
 
-void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
+bool IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 	std::string channels = cmd.mParams[0];
 	if (channels.empty()) {
-		return;
+		return true;
 	}
 
 	size_t pos = 0;
@@ -15,7 +15,7 @@ void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 
 		channel = channel.substr(channel[0] == '#');
 		if (channel.empty())
-			return;
+			return true;
 		if (cmd.mParams.size() == 1)
 			mChannelManager.join(channel, client, "");
 		else if (cmd.mParams.size() >= 2)
@@ -23,4 +23,5 @@ void IRCServer::handleJOIN(IRCClient *client, const IRCCommand &cmd) {
 
 		pos = end + 1;
 	}
+	return true;
 }

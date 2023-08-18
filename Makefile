@@ -14,6 +14,7 @@ SRC_FILES = main.cpp setup/InitData.cpp \
 			server/IRCChannelManager.cpp \
 			server/IRCChannel.cpp \
 			server/IRCCommand.cpp \
+			server/command_handling/HandleQUIT.cpp \
 			server/command_handling/HandleCAP.cpp \
 			server/command_handling/HandleJOIN.cpp \
 			server/command_handling/HandleKICK.cpp \
