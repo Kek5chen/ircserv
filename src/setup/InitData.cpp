@@ -35,7 +35,7 @@ InitData::InitData(int argc, const char **argv) : mValid(true) {
 	}
 
 	mPort = static_cast<unsigned short>(port);
-	mPassword = argv[2];
+	mPassword = argc > 2 ? argv[2] : "";
 	mIp = argc > 3 ? argv[3] : "0.0.0.0";
 }
 
