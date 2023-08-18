@@ -59,8 +59,8 @@ short IRCClient::poll() {
 	return mPfd.revents;
 }
 
-bool IRCClient::hasAccess() const{
-	const std::string &password = getServer()->getPassword();;
+bool IRCClient::hasAccess() const {
+	const std::string &password = getServer()->getPassword();
 	return password.empty() || password == mSuppliedPassword;
 }
 
