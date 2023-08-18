@@ -36,6 +36,8 @@ public:
 	void	addOperator(const std::string &nickname);
 	void	removeOperator(const std::string &nickname);
 	void	printChannelMode();
+	bool	printChannelTopic();
+	bool	setChannelTopic(IRCClient *client, const std::string &topic);
 
 	bool	checkPermission(IRCClient *client, const std::string &password);
 
@@ -51,4 +53,5 @@ private:
 	std::vector<std::string>	mOperators;
 	int	mUserLimit;
 	std::vector<std::string>	mInvitedUsers;
+	std::string mTopic;
 };

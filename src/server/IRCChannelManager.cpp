@@ -153,3 +153,17 @@ bool IRCChannelManager::isOperator(const std::string &channelName, IRCClient *cl
 const std::map<std::string, const IRCChannel *> &IRCChannelManager::getChannels() {
 	return std::fuck_cast<const std::map<std::string, const IRCChannel *> >(mChannels);
 }
+
+bool IRCChannelManager::printChannelTopic(const std::string &channelName) {
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return false;
+	return channel->printChannelTopic();
+}
+
+bool IRCChannelManager::setChannelTopic(const std::string &channelName, IRCClient *client, const std::string &topic) {
+	IRCChannel *channel = this->get(channelName);
+	if (!channel)
+		return false;
+	return channel->setChannelTopic(client, topic);
+}
