@@ -9,6 +9,7 @@
 #include <sstream>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
@@ -75,6 +76,19 @@ void IRCServer::bind() {
 		close(mSocketFd);
 		throw std::runtime_error("Socket binding failed. Is there another instance of the server running?");
 	}
+
+	// get ip
+	sockaddr_in actual_addr = {};
+	socklen_t addr_len;
+	if (getsockname(mSocketFd, (struct sockaddr *)&actual_addr, &addr_len) == -1) {
+		close(mSocketFd);
+		throw std::runtime_error("Could not get IP that the socket is bound to");
+	}
+
+	char ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &(actual_addr.sin_addr), ip, INET_ADDRSTRLEN);
+	mHost = ip;
+	mCmdBase.mPrefix.mHostname = mHost;
 	mIsBound = true;
 }
 
