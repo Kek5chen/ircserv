@@ -3,9 +3,10 @@
 
 bool IRCServer::handlePASS(IRCClient *client, const IRCCommand &cmd) {
 	client->mSuppliedPassword = cmd.mParams[0];
-	if (!client->hasAccess())
+	bool hasAccess = client->hasAccess();
+	if (!hasAccess)
 		IRCServer::getResponseBase().setCommand(ERR_PASSWDMISMATCH)
 				.setEnd("Incorrect Password")
 				.sendTo(client);
-	return false;
+	return hasAccess;
 }
