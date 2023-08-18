@@ -172,7 +172,8 @@ bool IRCServer::handle(IRCClient *client) {
 		}
 		if (!client->hasAccess() && cmd.mCommand.mName != "PASS")
 			return false;
-		return (this->*(cmdIt->second))(client, cmd);
+		if (!(this->*(cmdIt->second))(client, cmd))
+			return false;
 	}
 	return true;
 }
