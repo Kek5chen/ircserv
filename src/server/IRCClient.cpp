@@ -117,3 +117,14 @@ const std::string &IRCClient::getHostname() const {
 const std::string &IRCClient::getRealName() const {
 	return mRealName;
 }
+
+bool IRCClient::isNicknameFree(const std::string &nickname) {
+	if (nickname == mNickname)
+		return true;
+	const std::vector<const IRCClient *> &clients = getServer()->getClients();
+	for (std::vector<const IRCClient *>::const_iterator it = clients.begin(); it != clients.end(); it++) {
+		if ((*it)->getNickname() == nickname)
+			return false;
+	}
+	return true;
+}
