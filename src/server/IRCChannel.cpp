@@ -41,6 +41,7 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 		.setEnd(userList)
 		.sendTo(client);
 	IRCServer::getResponseBase().setCommand(RPL_ENDOFNAMES)
+		.addParam(client->getNickname())
 		.addParam("#" + mName)
 		.setEnd("End of NAMES list")
 		.sendTo(client);
