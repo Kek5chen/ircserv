@@ -79,6 +79,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else {
 		sendErrorMessage(client, cmd, ERR_UMODEUNKNOWNFLAG, "Unknown mode flag");
 	}
+	// TODO: remove this
 	mChannelManager.printChannelMode(channel);
 	return true;
 }

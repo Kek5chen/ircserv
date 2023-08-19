@@ -150,6 +150,7 @@ void IRCChannel::removeOperator(const std::string &nickname) {
 		mOperators.erase(it);
 }
 
+// TODO: Remove this
 void IRCChannel::printChannelMode() {
 	std::string mode;
 

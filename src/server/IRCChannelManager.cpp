@@ -141,6 +141,7 @@ void IRCChannelManager::removeOperator(const std::string &channelName, const std
 	channel->removeOperator(nickname);
 }
 
+// TODO: remove this
 bool IRCChannelManager::printChannelMode(const std::string &channelName) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
