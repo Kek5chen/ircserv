@@ -12,10 +12,11 @@
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
 #include "utils/FuckCast.hpp"
+#include "utils/nullptr.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
 handler_map_type IRCServer::mCmdHandlers;
-IRCServer *IRCServer::lastInstance = 0;
+IRCServer *IRCServer::lastInstance = nilptr;
 
 void IRCServer::initCmdHandlers() {
 	mCmdHandlers["QUIT"] = &IRCServer::handleQUIT;

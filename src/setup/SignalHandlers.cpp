@@ -1,5 +1,6 @@
 #include "setup/SignalHandlers.hpp"
 #include "server/IRCServer.hpp"
+#include "utils/nullptr.hpp"
 #include <csignal>
 #include <cstdlib>
 
@@ -19,7 +20,7 @@ void registerSignals(IRCServer *ctx) {
 }
 
 void unregisterSignals() {
-	g_ctx = 0;
+	g_ctx = nilptr;
 	std::signal(SIGABRT, SIG_DFL);
 	std::signal(SIGTERM, SIG_DFL);
 }
