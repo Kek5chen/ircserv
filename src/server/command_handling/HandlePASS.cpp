@@ -2,7 +2,7 @@
 #include "server/CodeDefines.hpp"
 
 bool IRCServer::handlePASS(IRCClient *client, const IRCCommand &cmd) {
-	if (client->hasAccess())
+	if (client->hasAccess() && !client->mSuppliedPassword.empty())
 		IRCServer::getResponseBase().setCommand(ERR_ALREADYREGISTRED)
 			.setEnd("You may not reregister")
 			.sendTo(client);
