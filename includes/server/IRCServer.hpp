@@ -51,8 +51,6 @@ private:
 	bool handleINVITE(IRCClient *client, const IRCCommand &cmd);
 	bool handleWHO(IRCClient *client, const IRCCommand &cmd);
 
-	static void sendErrorMessage(IRCClient *client, const IRCCommand &cmd, int code, std::string msg);
-
 	static void initCmdHandlers();
 
 	const unsigned short mPort;

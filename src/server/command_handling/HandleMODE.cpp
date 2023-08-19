@@ -25,17 +25,17 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	if (cmd.mParams.size() < 2) {
 		if (cmd.mParams.size() == 1) {
 			if (!mChannelManager.printChannelMode(cmd.mParams[0])) {
-				sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, cmd.mParams[0] + " :No such channel");
+				client->sendErrorMessage(cmd.mCommand.mName, ERR_NOSUCHCHANNEL, cmd.mParams[0] + " :No such channel");
 				return true;
 			}
 			else
 				return true;
         }
-		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");
 		return true;
 	}
 	if (!mChannelManager.isOperator(cmd.mParams[0], client)) {
-		sendErrorMessage(client, cmd, ERR_CHANOPRIVSNEEDED, "You're not channel operator");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_CHANOPRIVSNEEDED, "You're not channel operator");
 		return true;
 	}
 	const std::string &channel = cmd.mParams[0];
@@ -48,7 +48,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setTopicRestriction(channel, flag);
 	else if (flag == "+k") {
 		if (param_count < 3) {
-			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+			client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");
 			return true;
 		}
 		mChannelManager.setPassword(channel, cmd.mParams[2]);
@@ -57,7 +57,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		mChannelManager.setPassword(channel, "");
 	else if (flag == "+o" || flag == "-o") {
 		if (param_count < 3) {
-			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+			client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");
 			return true;
 		}
 		if (flag == "+o")
@@ -69,7 +69,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 		char* endptr;
 		long value = std::strtol(cmd.mParams[2].c_str(), &endptr, 10);
 		if (param_count < 3 || *endptr != '\0') {
-			sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+			client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");
 			return true;
 		}
 		mChannelManager.setUserLimit(channel, value);
@@ -77,7 +77,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else if (flag == "-l")
 		mChannelManager.setUserLimit(channel, -1);
 	else {
-		sendErrorMessage(client, cmd, ERR_UMODEUNKNOWNFLAG, "Unknown mode flag");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_UMODEUNKNOWNFLAG, "Unknown mode flag");
 	}
 	// TODO: remove this
 	mChannelManager.printChannelMode(channel);

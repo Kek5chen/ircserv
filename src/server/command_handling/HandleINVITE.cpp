@@ -10,7 +10,7 @@
 
 bool IRCServer::handleINVITE(IRCClient *client, const IRCCommand &cmd) {
 	if (cmd.mParams.size() < 2) {
-		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");
 		return true;
 	}
 	const std::string &channel = cmd.mParams[1];
@@ -23,16 +23,16 @@ bool IRCServer::handleINVITE(IRCClient *client, const IRCCommand &cmd) {
 		}
 	}
 	if (it == mClients.end()) {
-		sendErrorMessage(client, cmd, ERR_NOSUCHNICK, invitee + " :No such nick");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_NOSUCHNICK, invitee + " :No such nick");
 		return true;
 	}
 	IRCChannel *chan = mChannelManager.get(channel);
 	if (!chan) {
-		sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, channel + " :No such channel");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_NOSUCHCHANNEL, channel + " :No such channel");
 		return true;
 	}
 	if (chan->hasJoined(*it)) {
-		sendErrorMessage(client, cmd, ERR_USERONCHANNEL, invitee + " #" + channel + " :is already on channel");
+		client->sendErrorMessage(cmd.mCommand.mName, ERR_USERONCHANNEL, invitee + " #" + channel + " :is already on channel");
 		return true;
 	}
 	chan->addInvitedUser(invitee);

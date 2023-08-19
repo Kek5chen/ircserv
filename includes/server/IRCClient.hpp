@@ -28,6 +28,8 @@ public:
 	const std::string &getHostname() const;
 	const std::string &getRealName() const;
 	IRCCommand getResponseBase() const;
+
+	void sendErrorMessage(const std::string &command, int errorCode, const std::string &msg);
 private:
 	int mSocketFd;
 	bool mIsOpen;

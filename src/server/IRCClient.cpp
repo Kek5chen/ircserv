@@ -110,6 +110,14 @@ IRCCommand IRCClient::getResponseBase() const {
 	return mBaseCommand;
 }
 
+void IRCClient::sendErrorMessage(const std::string &command, int errorCode, const std::string &msg) {
+	IRCServer::getResponseBase().setCommand(errorCode)
+		.addParam(mNickname)
+		.addParam(command)
+		.setEnd(msg)
+		.sendTo(this);
+}
+
 const std::string &IRCClient::getHostname() const {
 	return mHost;
 }
