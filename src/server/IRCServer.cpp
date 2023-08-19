@@ -6,14 +6,11 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
-#include <sstream>
 #include <netinet/in.h>
 #include <fcntl.h>
-#include <arpa/inet.h>
 #include "server/IRCServer.hpp"
 #include "server/IRCClient.hpp"
 #include "utils/Logger.hpp"
-#include "server/CodeDefines.hpp"
 #include "utils/FuckCast.hpp"
 
 bool IRCServer::mCmdHandlersInit = false;
@@ -192,26 +189,6 @@ void IRCServer::pollClients() {
 		mClients.erase(std::remove(mClients.begin(), mClients.end(), mClients[i]), mClients.end());
 		i--;
 	}
-}
-
-void IRCServer::sendMotd(IRCClient *client) {
-	IRCServer::getResponseBase().setCommand(RPL_MOTDSTART)
-		.setEnd("- ft_irc (mdoll, kschmidt) Message of the day - ")
-		.sendTo(client);
-	IRCServer::getResponseBase().setCommand(RPL_MOTD)
-		.setEnd("- Welcome to ft_irc! Your host is " + mHost + ", running version "
-															   IRC_VERSION " built on " __DATE__ " at " __TIME__)
-		.sendTo(client);
-
-	std::string userAmount = ((std::ostringstream &) (std::ostringstream() << mClients.size())).str();
-	IRCServer::getResponseBase().setCommand(RPL_LUSERCLIENT)
-		.setEnd("- There are " + userAmount + " user(s) online")
-		.sendTo(client);
-
-	IRCServer::getResponseBase().setCommand(RPL_ENDOFMOTD)
-		.addParam(client->getNickname())
-		.setEnd("End of MOTD")
-		.sendTo(client);
 }
 
 IRCCommand IRCServer::getResponseBase() {
