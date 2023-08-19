@@ -3,6 +3,7 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
+#include <iomanip>
 
 static int ft_stol(const std::string &str) {
 	std::istringstream iss(str);
@@ -86,7 +87,7 @@ IRCCommand::operator std::string() const {
 
 	if (mCommand.mCode) {
 		std::stringstream code;
-		code << mCommand.mCode;
+		code << std::setw(3) << std::setfill('0') << mCommand.mCode;
 		result += code.str();
 	} else
 		result += mCommand.mName;
