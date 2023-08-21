@@ -34,6 +34,7 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
+	printChannelTopic();
 	IRCServer::getResponseBase().setCommand(RPL_NAMREPLY)
 		.addParam(client->getNickname())
 		.addParam("=")

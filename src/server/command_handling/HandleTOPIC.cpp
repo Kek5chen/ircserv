@@ -10,6 +10,15 @@
 //      RPL_NOTOPIC                     RPL_TOPIC
 //      ERR_CHANOPRIVSNEEDED
 
+
+// TODO
+//		no quotes: mParams[0] = channel name
+//		mEnd = topic
+//		no additional parameters: mParams.size() == 1 && mEnd.empty() -> mParams[0] = channel name
+// 		topic with quotes: mParams[0] = channel name, mEnd = topic with some funky symbols
+
+// TODO: check if topic gets also printed for client
+
 void IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	if (!mChannelManager.get(channel)) {
@@ -20,12 +29,12 @@ void IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 		sendErrorMessage(client, cmd, ERR_NOTONCHANNEL, channel + " :You're not on that channel");
 		return;
 	}
-	if (cmd.mParams.size() == 1) {
+	if (cmd.mParams.size() == 1 && cmd.mEnd.empty()) {
 		if (!mChannelManager.printChannelTopic(channel))
 			sendErrorMessage(client, cmd, RPL_NOTOPIC, channel + " :No topic is set");
 	}
-	else if (cmd.mParams.size() == 2) {
-		if (!mChannelManager.setChannelTopic(channel, client, cmd.mParams[1]))
+	else if (cmd.mParams.size() == 1 && !cmd.mEnd.empty()) {
+		if (!mChannelManager.setChannelTopic(channel, client, cmd.mEnd))
 			sendErrorMessage(client, cmd, ERR_CHANOPRIVSNEEDED, channel + " :You're not channel operator");
 	}
 	else
