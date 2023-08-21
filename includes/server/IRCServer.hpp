@@ -50,6 +50,7 @@ private:
 	bool handleMODE(IRCClient *client, const IRCCommand &cmd);
 	bool handleINVITE(IRCClient *client, const IRCCommand &cmd);
 	bool handleWHO(IRCClient *client, const IRCCommand &cmd);
+	bool handleTOPIC(IRCClient *client, const IRCCommand &cmd);
 
 	static void initCmdHandlers();
 

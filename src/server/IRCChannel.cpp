@@ -8,7 +8,7 @@
 
 IRCChannel::IRCChannel(IRCServer *owningServer, std::string name, IRCClient *creator)
 	: IIRCServerOwned(owningServer), mName(name), mCreator(creator), mInviteOnly(false), mTopicRestricted(false),
-	  mPassword(""), mUserLimit(-1) {
+	  mPassword(""), mUserLimit(-1), mTopic("") {
 	mOperators.push_back(creator->getNickname());
 }
 
@@ -34,6 +34,7 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
+	printChannelTopic();
 	IRCServer::getResponseBase().setCommand(RPL_NAMREPLY)
 		.addParam(client->getNickname())
 		.addParam("=")
@@ -211,4 +212,22 @@ void IRCChannel::addInvitedUser(const std::string &nickname) {
 	if (it == mInvitedUsers.end())
 		mInvitedUsers.push_back(nickname);
 
+}
+
+bool IRCChannel::printChannelTopic() {
+	if (mTopic.empty())
+		return false;
+	IRCServer::getResponseBase().setCommand("TOPIC")
+		.addParam(mName)
+		.addParam(mTopic)
+		.sendTo(this);
+	return true;
+}
+
+bool IRCChannel::setChannelTopic(IRCClient *client, const std::string &topic) {
+	if (!mTopicRestricted || isOperator(client))
+		mTopic = topic;
+	else if (mTopicRestricted)
+		return false;
+	return true;
 }
