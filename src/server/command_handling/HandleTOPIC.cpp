@@ -17,33 +17,32 @@
 //		no additional parameters: mParams.size() == 1 && mEnd.empty() -> mParams[0] = channel name
 // 		topic with quotes: mParams[0] = channel name, mEnd = topic with some funky symbols
 
-
-// TODO disconnect when client without op changes topic????
+// TODO topic with only one word i considered an error -> should not be like this :(
 bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	if (!mChannelManager.get(channel)) {
 		client->sendErrorMessage(cmd, ERR_NOSUCHCHANNEL, channel + " :No such channel");
-		return false;
+		return true;
 	}
 	if (!mChannelManager.get(channel)->hasJoined(client)) {
 		client->sendErrorMessage(cmd, ERR_NOTONCHANNEL, channel + " :You're not on that channel");
-		return false;
+		return true;
 	}
 	if (cmd.mParams.size() == 1 && cmd.mEnd.empty()) {
 		if (!mChannelManager.printChannelTopic(client, channel)) {
 			client->sendErrorMessage(cmd, RPL_NOTOPIC, channel + " :No topic is set");
-			return false;
+			return true;
 		}
 	}
 	else if (cmd.mParams.size() == 1 && !cmd.mEnd.empty()) {
 		if (!mChannelManager.setChannelTopic(channel, client, cmd.mEnd)) {
 			client->sendErrorMessage(cmd, ERR_CHANOPRIVSNEEDED, channel + " :You're not channel operator");
-			return false;
+			return true;
 		}
 	}
 	else {
 		client->sendErrorMessage(cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
-		return false;
+		return true;
 	}
 	return true;
 }
