@@ -17,7 +17,6 @@
 //		no additional parameters: mParams.size() == 1 && mEnd.empty() -> mParams[0] = channel name
 // 		topic with quotes: mParams[0] = channel name, mEnd = topic with some funky symbols
 
-// TODO topic with only one word i considered an error -> should not be like this :(
 bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	if (!mChannelManager.get(channel)) {
@@ -34,8 +33,13 @@ bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 			return true;
 		}
 	}
-	else if (cmd.mParams.size() == 1 && !cmd.mEnd.empty()) {
-		if (!mChannelManager.setChannelTopic(channel, client, cmd.mEnd)) {
+	else if ((cmd.mParams.size() == 1 && !cmd.mEnd.empty()) || (cmd.mParams.size() == 2 && cmd.mEnd.empty())) {
+		std::string topic;
+		if (cmd.mParams.size() == 2)
+			topic = cmd.mParams[1];
+		else
+			topic = cmd.mEnd;
+		if (!mChannelManager.setChannelTopic(channel, client, topic)) {
 			client->sendErrorMessage(cmd, ERR_CHANOPRIVSNEEDED, channel + " :You're not channel operator");
 			return true;
 		}
