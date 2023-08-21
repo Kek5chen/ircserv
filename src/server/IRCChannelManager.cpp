@@ -1,6 +1,7 @@
 #include "server/IRCChannelManager.hpp"
 #include "server/IRCServer.hpp"
 #include "utils/FuckCast.hpp"
+#include "server/CodeDefines.hpp"
 
 IRCChannelManager::IRCChannelManager(IRCServer *owningServer) : IIRCServerOwned(owningServer) {}
 
@@ -59,18 +60,26 @@ bool IRCChannelManager::part(IRCClient *client, const std::string &channelName, 
 bool IRCChannelManager::kick(
 	IRCClient *sender, const std::string &channelName, const std::string &userName, const std::string &reason) {
 	IRCChannel *channel = this->get(channelName);
-	if (!channel)
-		return false; // TODO: return error code ERR_NOSUCHCHANNEL
-	if (!channel->isOperator(sender))
-		return false; // TODO: return error code ERR_CHANOPRIVSNEEDED
-	if (!channel->hasJoined(sender))
-		return false; // TODO: return error code ERR_NOTONCHANNEL
+	if (!channel) {
+		sender->sendErrorMessage("KICK", ERR_NOSUCHCHANNEL, channelName + " :No such channel");
+		return false;
+	}
+	if (!channel->isOperator(sender)) {
+		sender->sendErrorMessage("KICK", ERR_CHANOPRIVSNEEDED, channelName + " :You're not channel operator");
+		return false;
+	}
+	if (!channel->hasJoined(sender)) {
+		sender->sendErrorMessage("KICK", ERR_NOTONCHANNEL, channelName + " :You're not on that channel");
+		return false;
+	}
 	IRCClient *client = channel->getClient(userName);
 	if (!client) {
-		return false; // TODO: return error code ERR_NOSUCHNICK
+		sender->sendErrorMessage("KICK", ERR_NOSUCHNICK, userName + " :No such nick");
+		return false;
 	}
 	if (!channel->hasJoined(client)) {
-		return false; // TODO: return error code ERR_USERNOTINCHANNEL
+		sender->sendErrorMessage("KICK", ERR_NOTONCHANNEL, channelName + " :They aren't on that channel");
+		return false;
 	}
 	bool status = channel->kick(sender, client, reason);
 	if (!channel->getMemberCount())
