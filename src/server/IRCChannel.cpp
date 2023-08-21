@@ -155,7 +155,6 @@ void IRCChannel::removeOperator(const std::string &nickname) {
 		mOperators.erase(it);
 }
 
-// TODO: Remove this / But we need this?
 void IRCChannel::printChannelMode(IRCClient *client) {
 	std::string mode;
 
@@ -171,9 +170,9 @@ void IRCChannel::printChannelMode(IRCClient *client) {
 		mode += 'o';
 	IRCServer::getResponseBase().setCommand(RPL_CHANNELMODEIS)
 		.addParam(client->getNickname())
-		.addParam("#" + mName)
+		.addParam(mName)
 		.setEnd("+" + mode)
-		.sendTo(client);
+		.sendTo(this);
 }
 
 bool IRCChannel::checkPermission(IRCClient *client, const std::string &password) {
