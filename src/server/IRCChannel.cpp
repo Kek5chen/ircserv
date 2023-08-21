@@ -51,8 +51,10 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 
 bool IRCChannel::part(IRCClient *client, const std::string &reason) {
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
-	if (it == mMembers.end())
-		return false; // TODO: return error code ERR_NEEDMOREPARAMS
+	if (it == mMembers.end()) {
+		client->sendErrorMessage("PART", ERR_NEEDMOREPARAMS, "Not enough parameters");
+		return false;
+	}
 
 	client->getResponseBase().setCommand("PART")
 		.addParam("#" + mName)
@@ -64,8 +66,10 @@ bool IRCChannel::part(IRCClient *client, const std::string &reason) {
 
 bool IRCChannel::kick(IRCClient *sender, IRCClient *client, const std::string &reason) {
 	std::vector<IRCClient *>::iterator it = std::find(mMembers.begin(), mMembers.end(), client);
-	if (it == mMembers.end())
-		return false; // TODO: return error code ERR_NOTONCHANNEL
+	if (it == mMembers.end()) {
+		sender->sendErrorMessage("KICK", ERR_NOTONCHANNEL, "You're not on that channel");
+		return false;
+	}
 	sender->getResponseBase().setCommand("KICK")
 		.addParam("#" + mName)
 		.addParam(client->getNickname())
