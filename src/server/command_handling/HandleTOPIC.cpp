@@ -19,24 +19,31 @@
 
 // TODO: check if topic gets also printed for client
 
-void IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
+bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	if (!mChannelManager.get(channel)) {
-		sendErrorMessage(client, cmd, ERR_NOSUCHCHANNEL, channel + " :No such channel");
-		return;
+		client->sendErrorMessage(cmd, ERR_NOSUCHCHANNEL, channel + " :No such channel");
+		return false;
 	}
 	if (!mChannelManager.get(channel)->hasJoined(client)) {
-		sendErrorMessage(client, cmd, ERR_NOTONCHANNEL, channel + " :You're not on that channel");
-		return;
+		client->sendErrorMessage(cmd, ERR_NOTONCHANNEL, channel + " :You're not on that channel");
+		return false;
 	}
 	if (cmd.mParams.size() == 1 && cmd.mEnd.empty()) {
-		if (!mChannelManager.printChannelTopic(channel))
-			sendErrorMessage(client, cmd, RPL_NOTOPIC, channel + " :No topic is set");
+		if (!mChannelManager.printChannelTopic(channel)) {
+			client->sendErrorMessage(cmd, RPL_NOTOPIC, channel + " :No topic is set");
+			return false;
+		}
 	}
 	else if (cmd.mParams.size() == 1 && !cmd.mEnd.empty()) {
-		if (!mChannelManager.setChannelTopic(channel, client, cmd.mEnd))
-			sendErrorMessage(client, cmd, ERR_CHANOPRIVSNEEDED, channel + " :You're not channel operator");
+		if (!mChannelManager.setChannelTopic(channel, client, cmd.mEnd)) {
+			client->sendErrorMessage(cmd, ERR_CHANOPRIVSNEEDED, channel + " :You're not channel operator");
+			return false;
+		}
 	}
-	else
-		sendErrorMessage(client, cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+	else {
+		client->sendErrorMessage(cmd, ERR_NEEDMOREPARAMS, "Not enough parameters");
+		return false;
+	}
+	return true;
 }
