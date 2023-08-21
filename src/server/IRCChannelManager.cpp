@@ -142,11 +142,11 @@ void IRCChannelManager::removeOperator(const std::string &channelName, const std
 }
 
 // TODO: remove this
-bool IRCChannelManager::printChannelMode(const std::string &channelName) {
+bool IRCChannelManager::printChannelMode(IRCClient *client, const std::string &channelName) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return false;
-	channel->printChannelMode();
+	channel->printChannelMode(client);
     return true;
 }
 

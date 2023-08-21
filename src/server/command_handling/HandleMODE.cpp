@@ -24,7 +24,7 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	//       [OUT] :127.0.0.1 501 kx MODE :Unknown mode flag
 	if (cmd.mParams.size() < 2) {
 		if (cmd.mParams.size() == 1) {
-			if (!mChannelManager.printChannelMode(cmd.mParams[0])) {
+			if (!mChannelManager.printChannelMode(client, cmd.mParams[0])) {
 				client->sendErrorMessage(cmd.mCommand.mName, ERR_NOSUCHCHANNEL, cmd.mParams[0] + " :No such channel");
 				return true;
 			}
@@ -79,7 +79,5 @@ bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	else {
 		client->sendErrorMessage(cmd.mCommand.mName, ERR_UMODEUNKNOWNFLAG, "Unknown mode flag");
 	}
-	// TODO: remove this
-	mChannelManager.printChannelMode(channel);
 	return true;
 }

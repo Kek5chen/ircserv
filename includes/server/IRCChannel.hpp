@@ -35,7 +35,7 @@ public:
 	void	setUserLimit(int userLimit);
 	void	addOperator(const std::string &nickname);
 	void	removeOperator(const std::string &nickname);
-	void	printChannelMode();
+	void	printChannelMode(IRCClient *client);
 	bool	printChannelTopic();
 	bool	setChannelTopic(IRCClient *client, const std::string &topic);
 
