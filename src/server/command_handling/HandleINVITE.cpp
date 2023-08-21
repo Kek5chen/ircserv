@@ -2,12 +2,6 @@
 #include "server/IRCServer.hpp"
 #include <algorithm>
 
-// TODO invitor must be channel op if the channel is invite only
-// TODO channel must not exist or be valid
-// TODO person beeing invited recieve a message nothing more
-// TODO have a list of invited people for each channel or have a list of channels for each client
-// TODO check if invitee is already on channel and even on server
-
 bool IRCServer::handleINVITE(IRCClient *client, const IRCCommand &cmd) {
 	if (cmd.mParams.size() < 2) {
 		client->sendErrorMessage(cmd.mCommand.mName, ERR_NEEDMOREPARAMS, "Not enough parameters");

@@ -2,23 +2,6 @@
 #include "server/IRCServer.hpp"
 #include "server/CodeDefines.hpp"
 
-
-// TODO params: /mode <channel> <+/-> <flag> <<flag_param>>
-// TODO	// i: Set/remove Invite-only channel 										(+i invite only / -i no invite needed)								TODO: also need to change JOIN
-// TODO	// t: Set/remove the restrictions of the TOPIC command to channel operators (+t only ops change TOPIC / -t anyone can change TOPIC)
-// TODO	// k: Set/remove the channel key (password) 								(+k <password> sets a password to chanel / -k no password) 			TODO: also need to change JOIN
-// TODO	// o: Give/take channel operator privilege 									(+o <nickname> sets op / -o <nickname> removes op)
-// TODO	// l: Set/remove the user limit to channel 									(+l <user_limit> maximum of user_limit users / -l removes limit) 	TODO: also need to change JOIN
-// TODO	// change JOIN, INVITE, TOPIC
-
-// TODO	// possible errors:
-// TODO	// invalid channel
-// TODO	// missing +/-
-// TODO	// invalid flag
-// TODO	// missing flag params
-// TODO	// no rights?
-// TODO	// flag already set
-
 bool IRCServer::handleMODE(IRCClient *client, const IRCCommand &cmd) {
 	// TODO: [IN] MODE #hi +v kx
 	//       [OUT] :127.0.0.1 501 kx MODE :Unknown mode flag
