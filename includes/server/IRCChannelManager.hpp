@@ -32,7 +32,7 @@ public:
 
 	bool isOperator(const std::string &channelName, IRCClient *client);
 
-	bool printChannelTopic(const std::string &channelName);
+	bool printChannelTopic(IRCClient *client, const std::string &channelName);
 	bool setChannelTopic(const std::string &channelName, IRCClient *client, const std::string &topic);
 
 private:

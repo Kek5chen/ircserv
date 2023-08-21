@@ -161,11 +161,11 @@ const std::map<std::string, const IRCChannel *> &IRCChannelManager::getChannels(
 	return std::fuck_cast<const std::map<std::string, const IRCChannel *> >(mChannels);
 }
 
-bool IRCChannelManager::printChannelTopic(const std::string &channelName) {
+bool IRCChannelManager::printChannelTopic(IRCClient *client, const std::string &channelName) {
 	IRCChannel *channel = this->get(channelName);
 	if (!channel)
 		return false;
-	return channel->printChannelTopic();
+	return channel->printChannelTopic(client);
 }
 
 bool IRCChannelManager::setChannelTopic(const std::string &channelName, IRCClient *client, const std::string &topic) {

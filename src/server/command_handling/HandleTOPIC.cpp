@@ -17,8 +17,8 @@
 //		no additional parameters: mParams.size() == 1 && mEnd.empty() -> mParams[0] = channel name
 // 		topic with quotes: mParams[0] = channel name, mEnd = topic with some funky symbols
 
-// TODO: check if topic gets also printed for client
 
+// TODO disconnect when client without op changes topic????
 bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &channel = cmd.mParams[0];
 	if (!mChannelManager.get(channel)) {
@@ -30,7 +30,7 @@ bool IRCServer::handleTOPIC(IRCClient *client, const IRCCommand &cmd) {
 		return false;
 	}
 	if (cmd.mParams.size() == 1 && cmd.mEnd.empty()) {
-		if (!mChannelManager.printChannelTopic(channel)) {
+		if (!mChannelManager.printChannelTopic(client, channel)) {
 			client->sendErrorMessage(cmd, RPL_NOTOPIC, channel + " :No topic is set");
 			return false;
 		}

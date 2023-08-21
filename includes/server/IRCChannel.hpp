@@ -36,7 +36,7 @@ public:
 	void	addOperator(const std::string &nickname);
 	void	removeOperator(const std::string &nickname);
 	void	printChannelMode(IRCClient *client);
-	bool	printChannelTopic();
+	bool	printChannelTopic(IRCClient *client);
 	bool	setChannelTopic(IRCClient *client, const std::string &topic);
 
 	bool	checkPermission(IRCClient *client, const std::string &password);

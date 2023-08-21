@@ -34,7 +34,7 @@ bool IRCChannel::join(IRCClient *client, const std::string &password) {
 		if (i != mMembers.size() - 1)
 			userList += ' ';
 	}
-	printChannelTopic();
+	printChannelTopic(client);
 	IRCServer::getResponseBase().setCommand(RPL_NAMREPLY)
 		.addParam(client->getNickname())
 		.addParam("=")
@@ -219,13 +219,14 @@ void IRCChannel::addInvitedUser(const std::string &nickname) {
 
 }
 
-bool IRCChannel::printChannelTopic() {
+bool IRCChannel::printChannelTopic(IRCClient *client) {
 	if (mTopic.empty())
 		return false;
-	IRCServer::getResponseBase().setCommand("TOPIC")
+	IRCServer::getResponseBase().setCommand(RPL_TOPIC)
+		.addParam(client->getNickname())
 		.addParam(mName)
-		.addParam(mTopic)
-		.sendTo(this);
+		.addParam(":" + mTopic)
+		.sendTo(client);
 	return true;
 }
 
