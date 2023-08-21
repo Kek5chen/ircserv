@@ -14,4 +14,4 @@ private:
 	void operator&() const;  // Ensure it can't take address
 };
 
-NullType nilptr = {};
+extern NullType nilptr;

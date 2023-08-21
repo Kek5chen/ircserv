@@ -4,6 +4,8 @@
 #include <csignal>
 #include <cstdlib>
 
+NullType nilptr = {};
+
 static IRCServer *g_ctx;
 
 void graceful_signal_handler(int signal) {
