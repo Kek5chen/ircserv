@@ -28,6 +28,7 @@ SRC_FILES = main.cpp setup/InitData.cpp \
 			server/command_handling/HandleWHO.cpp \
 			server/command_handling/HandleINVITE.cpp \
 			server/command_handling/HandleTOPIC.cpp \
+			utils/nullptr.cpp \
 			server/IIRCServerOwned.cpp \
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

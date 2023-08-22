@@ -1,3 +1,5 @@
+#pragma once
+
 class NullType {
 public:
 	template<class T>
