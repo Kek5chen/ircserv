@@ -172,6 +172,7 @@ bool IRCServer::handle(IRCClient *client) {
 		}
 		if (!client->hasAccess() && cmd.mCommand.mName != "PASS")
 			return false;
+		// TODO: Don't allow to do anything until the user has been registered with USER and NICK
 		if (!(this->*(cmdIt->second))(client, cmd))
 			return false;
 	}
