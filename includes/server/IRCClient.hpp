@@ -45,5 +45,6 @@ private:
 	std::string mHost;
 	IRCCommand mBaseCommand;
 	std::string mQuitReason;
+	std::string mBuffer;
 	bool isNicknameFree(const std::string &nickname);
 };

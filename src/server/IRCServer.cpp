@@ -138,12 +138,13 @@ bool IRCServer::receiveData(IRCClient *client, std::string *buffer) {
 		throw std::runtime_error("An error occurred while trying to receive the sockets message.");
 	if (!received)
 		return false;
+	*std::remove(preBuf, preBuf + received, '\r') = 0;
 	buffer->append(preBuf);
 	return true;
 }
 
 bool IRCServer::handle(IRCClient *client) {
-	std::string buf;
+	std::string &buf = client->mBuffer;
 	short revents = client->poll();
 	if (revents & POLLHUP || revents & POLLERR || revents & POLLNVAL)
 		return false;
@@ -153,12 +154,12 @@ bool IRCServer::handle(IRCClient *client) {
 		return false;
 
 	while (!buf.empty()) {
-		size_t end = buf.find("\r\n");
+		size_t end = buf.find('\n');
 		if (end == std::string::npos)
 			break;
-		IRCCommand cmd(buf.substr(0, end + 2));
+		IRCCommand cmd(buf.substr(0, end + 1));
 		LOG(CYAN("[IN] ") << CYAN((std::string)cmd));
-		buf = buf.substr(end + 2);
+		buf = buf.substr(end + 1);
 		if (!cmd.isValid())
 			continue;
 
