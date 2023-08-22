@@ -14,6 +14,8 @@ public:
 
 	bool isValid() const;
 	bool hasAccess() const;
+	bool isRegistered() const;
+
 	int getSocketFd();
 	short poll();
 	void send(const IRCCommand &command);
@@ -36,7 +38,6 @@ private:
 	struct pollfd mPfd;
 	std::string mResponseBuffer;
 
-	bool mIsRegistered;
 	std::string mNickname;
 	std::string mUsername;
 	std::string mSuppliedPassword;

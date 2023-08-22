@@ -22,7 +22,7 @@ public:
 
 	bool hasJoined(const IRCClient *client) const;
 	bool isOperator(const IRCClient *client) const;
-	const std::vector<const IRCClient *> &getClients() const;
+	const std::vector<IRCClient *> &getClients() const;
 
 	const std::string &getName() const;
 	size_t getMemberCount() const;

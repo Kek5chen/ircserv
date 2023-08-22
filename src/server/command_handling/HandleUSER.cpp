@@ -32,12 +32,12 @@ void IRCServer::sendMotd(IRCClient *client) {
 
 bool IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &username = cmd.mParams[0];
+	bool wasRegistered = client->isRegistered();
 	client->setUsername(username);
 	if (cmd.mParams.size() > 1)
 		client->mMode = cmd.mParams[1];
 	client->mRealName = cmd.mEnd;
-	if (!client->mIsRegistered)
+	if (!wasRegistered)
 		sendMotd(client);
-	client->mIsRegistered = true;
 	return true;
 }

@@ -35,6 +35,7 @@ public:
 	bool printChannelTopic(IRCClient *client, const std::string &channelName);
 	bool setChannelTopic(const std::string &channelName, IRCClient *client, const std::string &topic);
 
+	void sendToClientChannels(IRCClient *client, IRCCommand &command);
 private:
 	std::map<std::string, IRCChannel *> mChannels;
 };

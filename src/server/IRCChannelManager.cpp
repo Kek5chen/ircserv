@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "server/IRCChannelManager.hpp"
 #include "server/IRCServer.hpp"
 #include "utils/FuckCast.hpp"
@@ -181,4 +182,15 @@ bool IRCChannelManager::setChannelTopic(const std::string &channelName, IRCClien
 	if (!channel)
 		return false;
 	return channel->setChannelTopic(client, topic);
+}
+
+void IRCChannelManager::sendToClientChannels(IRCClient *client, IRCCommand &command) {
+	for (std::map<std::string, IRCChannel *>::iterator it = mChannels.begin(); it != mChannels.end(); it++) {
+		const std::vector<IRCClient *> &clients = it->second->getClients();
+		if (std::find(clients.begin(), clients.end(), client) == clients.end())
+			continue;
+		for (size_t i = 0; i < clients.size(); i++) {
+			clients[i]->send(command);
+		}
+	}
 }

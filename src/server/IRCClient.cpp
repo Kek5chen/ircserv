@@ -8,7 +8,7 @@
 #include "utils/Logger.hpp"
 #include "server/IRCServer.hpp"
 
-IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(), mIsRegistered(false),
+IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(),
 															   mNickname(), mUsername(), mSuppliedPassword(),
 															   mQuitReason("Client disconnected") {
 	mSocketFd = socket_id;
@@ -39,6 +39,10 @@ IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(o
 
 bool IRCClient::isValid() const {
 	return mIsOpen;
+}
+
+bool IRCClient::isRegistered() const {
+	return hasAccess() && !mNickname.empty() && !mUsername.empty();
 }
 
 IRCClient::~IRCClient() {

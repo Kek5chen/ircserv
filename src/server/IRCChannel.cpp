@@ -206,8 +206,8 @@ bool IRCChannel::checkPermission(IRCClient *client, const std::string &password)
 	return true;
 }
 
-const std::vector<const IRCClient *> &IRCChannel::getClients() const {
-	return std::fuck_cast<const std::vector<const IRCClient *> >(mMembers);
+const std::vector<IRCClient *> &IRCChannel::getClients() const {
+	return std::fuck_cast<const std::vector<IRCClient *> >(mMembers);
 }
 
 void IRCChannel::addInvitedUser(const std::string &nickname) {

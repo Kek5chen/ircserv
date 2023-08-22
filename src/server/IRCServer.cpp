@@ -163,6 +163,11 @@ bool IRCServer::handle(IRCClient *client) {
 		if (!cmd.isValid())
 			continue;
 
+		if (cmd.mCommand.mName != "CAP" && cmd.mCommand.mName != "PASS" && (!client->hasAccess() ||
+											 (!client->isRegistered() && cmd.mCommand.mName != "NICK" &&
+											  cmd.mCommand.mName != "USER")))
+			return false;
+
 		handler_map_type::iterator cmdIt = mCmdHandlers.find(cmd.mCommand.mName);
 		if (cmdIt == mCmdHandlers.end()) {
 			LOG(YELLOW("[IN] === NOT IMPLEMENTED ==="));
@@ -170,9 +175,6 @@ bool IRCServer::handle(IRCClient *client) {
 			LOG(YELLOW("[IN] ===      ====       ==="));
 			continue;
 		}
-		if (!client->hasAccess() && cmd.mCommand.mName != "PASS")
-			return false;
-		// TODO: Don't allow to do anything until the user has been registered with USER and NICK
 		if (!(this->*(cmdIt->second))(client, cmd))
 			return false;
 	}
@@ -182,12 +184,13 @@ bool IRCServer::handle(IRCClient *client) {
 void IRCServer::pollClients() {
 	for (size_t i = 0; i < mClients.size(); i++) {
 		bool keepConnection = this->handle(mClients[i]);
-		mClients[i]->mIsOpen = keepConnection;
+		mClients[i]->mIsOpen = true;
 		if (keepConnection)
 			continue;
-		LOG("[INFO] Client disconnected");
-		mChannelManager.partFromAll(mClients[i], mClients[i]->mQuitReason);
 		mClients[i]->flushResponse();
+		mChannelManager.partFromAll(mClients[i], mClients[i]->mQuitReason);
+		mClients[i]->mIsOpen = false;
+		LOG("[INFO] Client disconnected");
 		delete mClients[i];
 		mClients.erase(std::remove(mClients.begin(), mClients.end(), mClients[i]), mClients.end());
 		i--;
