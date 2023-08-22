@@ -37,7 +37,7 @@ bool IRCServer::handleUSER(IRCClient *client, const IRCCommand &cmd) {
 	if (cmd.mParams.size() > 1)
 		client->mMode = cmd.mParams[1];
 	client->mRealName = cmd.mEnd;
-	if (!wasRegistered)
+	if (!wasRegistered && client->isRegistered())
 		sendMotd(client);
 	return true;
 }

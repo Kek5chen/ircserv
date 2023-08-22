@@ -12,7 +12,7 @@ bool IRCServer::handleNICK(IRCClient *client, const IRCCommand &cmd) {
 	client->setNickname(cmd.mParams[0]);
 	updateMsg.setCommand("NICK").setEnd(newNickname);
 	client->send(updateMsg);
-	if (!wasRegistered)
+	if (!wasRegistered && client->isRegistered())
 		sendMotd(client);
 	else
 		mChannelManager.sendToClientChannels(client, updateMsg.setCommand("NICK").setEnd(newNickname));
