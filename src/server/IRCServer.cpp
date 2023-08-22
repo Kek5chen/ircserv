@@ -158,7 +158,7 @@ bool IRCServer::handle(IRCClient *client) {
 		if (end == std::string::npos)
 			break;
 		IRCCommand cmd(buf.substr(0, end + 1));
-		LOG(CYAN("[IN] ") << CYAN((std::string)cmd));
+		LOG(CYAN("[IN] ") << CYAN((std::string) cmd));
 		buf = buf.substr(end + 1);
 		if (!cmd.isValid())
 			continue;
