@@ -52,6 +52,8 @@ private:
 	bool handleWHO(IRCClient *client, const IRCCommand &cmd);
 	bool handleTOPIC(IRCClient *client, const IRCCommand &cmd);
 
+	bool botResponse(IRCClient *client, const IRCCommand &cmd);
+
 	static void initCmdHandlers();
 
 	const unsigned short mPort;
