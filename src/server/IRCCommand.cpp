@@ -17,7 +17,7 @@ IRCCommand::IRCCommand() {
 }
 
 IRCCommand::IRCCommand(const std::string &cmd) {
-	size_t cmdEnd = cmd.find("\r\n");
+	size_t cmdEnd = cmd.find('\n');
 	std::istringstream iss(cmdEnd == std::string::npos ? cmd : cmd.substr(0, cmdEnd));
 	std::string str;
 
