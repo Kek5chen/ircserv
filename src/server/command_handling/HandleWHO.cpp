@@ -24,7 +24,7 @@ bool IRCServer::handleWHO(IRCClient *client, const IRCCommand &cmd) {
 	const std::vector<const IRCClient *> &clients = client->getServer()->getClients();
 
 	if (channel) {
-		for (std::vector<const IRCClient *>::const_iterator client2 = channel->getClients().begin();
+		for (std::vector<IRCClient *>::const_iterator client2 = channel->getClients().begin();
 			 client2 != channel->getClients().end(); ++client2) {
 			if (o && !channel->isOperator(*client2))
 				continue;
