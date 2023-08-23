@@ -32,3 +32,4 @@ int main(int argc, const char **argv) {
 	unregisterSignals();
 	return serverExitStatus;
 }
+ // TODO messeges look goofy when a username is in them
