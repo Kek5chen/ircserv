@@ -8,5 +8,6 @@ bool IRCServer::handleKICK(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &kickMessage = cmd.mEnd;
 	mChannelManager.kick(client, channel, targetClientNick, kickMessage);
 	// TODO: WeeChat outputs "sender has kicked" and that's it. needs to be checked.
+	// TODO: kick message is not getting displayed
 	return true;
 }
