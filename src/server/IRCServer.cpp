@@ -39,7 +39,7 @@ void IRCServer::initCmdHandlers() {
 
 IRCServer::IRCServer(unsigned short port, const std::string &password, const std::string &ip)
 	: mPort(port), mPassword(password), mSocketFd(0), mIsBound(false),
-	  mIsListening(false), mShouldStop(false), mHost(ip), mChannelManager(this) {
+	  mIsListening(false), mShouldStop(false), mHost(ip), mChannelManager(this), mBotNick("bottich") {
 	if (!mCmdHandlersInit)
 		initCmdHandlers();
 

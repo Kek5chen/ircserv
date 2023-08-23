@@ -17,7 +17,6 @@ static std::string buildBotMsg(const std::string &botNick, const std::string &me
 
 bool IRCServer::botResponse(IRCClient *client, const IRCCommand &cmd) {
 	const std::string &command = cmd.mCommand.mName;
-	const std::string botNick = "bottich";
 	std::string message;
 
 	if (command == "TIMEANDDAY") {
@@ -35,7 +34,7 @@ bool IRCServer::botResponse(IRCClient *client, const IRCCommand &cmd) {
 	}
 	else
 		return true;
-	message = buildBotMsg(botNick, message);
+	message = buildBotMsg(mBotNick, message);
 	client->mResponseBuffer = message;
 	//client->sendErrorMessage("BOTRESPONSE", RPL_INFO, message);
 	(void) client;

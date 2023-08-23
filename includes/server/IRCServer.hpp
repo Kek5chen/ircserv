@@ -71,4 +71,6 @@ private:
 	static handler_map_type mCmdHandlers;
 	static bool mCmdHandlersInit;
 	static IRCServer *lastInstance;
+
+	const std::string mBotNick;
 };
