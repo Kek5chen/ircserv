@@ -36,9 +36,6 @@ bool IRCServer::botResponse(IRCClient *client, const IRCCommand &cmd) {
 		return true;
 	message = buildBotMsg(mBotNick, message);
 	client->mResponseBuffer = message;
-	//client->sendErrorMessage("BOTRESPONSE", RPL_INFO, message);
 	(void) client;
 	return true;
 }
-// :test!test@localhost PRIVMSG #test :hello
-// :<sender_nick> PRIVMSG <channel_name> :<message_content>
