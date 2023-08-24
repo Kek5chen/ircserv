@@ -89,8 +89,8 @@ int IRCServer::loop() {
 	if (!mIsListening)
 		this->listen();
 	while (!mShouldStop) {
-		this->acceptNewClients();
 		this->pollClients();
+		this->acceptNewClients();
 	}
 	return 0;
 }
