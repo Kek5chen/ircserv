@@ -1,12 +1,14 @@
 #include "server/IRCServer.hpp"
 #include <ctime>
+#include <cstdlib>
+#include <sstream>
 
 static std::string buildBotMsg(const std::string &botNick, const std::string &message) {
 	return ":" + botNick + "!" + botNick + "@localhost PRIVMSG #" + botNick + " :" + message + "\r\n";
 }
 
 static std::string timeAndDay() {
-	std::time_t t = std::time(nullptr);
+	std::time_t t = std::time(NULL);
 	std::tm *tm = std::localtime(&t);
 	std::string message;
 	int hour = tm->tm_hour;
@@ -14,9 +16,9 @@ static std::string timeAndDay() {
 	int day = tm->tm_mday;
 	int month = tm->tm_mon + 1;
 	int year = tm->tm_year + 1900;
-	message = "It's " + std::to_string(hour) + ":" + \
-			std::to_string(min) + " on " + std::to_string(day) + "." + \
-				std::to_string(month) + "." + std::to_string(year) + ".";
+	std::ostringstream oss;
+	oss << hour << ":" << min << " on " << day << "." << month << "." << year << ".";
+	message = oss.str();
 	return message;
 }
 
