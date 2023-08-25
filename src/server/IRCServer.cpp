@@ -49,7 +49,7 @@ IRCServer::IRCServer(unsigned short port, const std::string &password, const std
 }
 
 IRCServer::~IRCServer() {
-	this->stop();
+	this->internalStop();
 }
 
 void IRCServer::bind() {
@@ -96,6 +96,10 @@ int IRCServer::loop() {
 }
 
 void IRCServer::stop() {
+	mShouldStop = true;
+}
+
+void IRCServer::internalStop() {
 	for (size_t i = 0; i < mClients.size(); i++)
 		delete mClients[i];
 	mClients.clear();

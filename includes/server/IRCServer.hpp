@@ -34,6 +34,7 @@ private:
 	void pollClients();
 	bool receiveData(IRCClient *client, std::string *buffer);
 	bool handle(IRCClient *client);
+	void internalStop();
 
 	void sendMotd(IRCClient *client);
 
