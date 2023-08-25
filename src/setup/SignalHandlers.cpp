@@ -11,9 +11,8 @@ static IRCServer *g_ctx;
 
 void graceful_signal_handler(int signal) {
 	(void) signal;
-	LOG("ZO");
+	LOG("Shutting server down gracefully");
 	g_ctx->stop();
-	exit(0);
 }
 
 void registerSignals(IRCServer *ctx) {
