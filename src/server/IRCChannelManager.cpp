@@ -18,7 +18,9 @@ IRCChannel *IRCChannelManager::get(const std::string &channelName) {
 IRCChannelManager::~IRCChannelManager() {
 	for (std::map<std::string, IRCChannel *>::iterator it = mChannels.begin(); it != mChannels.end(); it++) {
 		it->second->partAll("Shutting down");
+		delete it->second;
 	}
+	mChannels.clear();
 }
 
 IRCChannel *IRCChannelManager::getOrCreate(const std::string &channelName, IRCClient *requester) {
