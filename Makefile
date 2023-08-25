@@ -35,7 +35,7 @@ SRC_FILES = main.cpp setup/InitData.cpp \
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -I $(INC_DIR) -g
+CPPFLAGS = -g -Wall -Wextra -Werror -std=c++98 -I $(INC_DIR)
 
 DEPS = $(wildcard $(INC_DIR)/*.h)
 
@@ -63,4 +63,4 @@ re: fclean all
 	@echo "--- recompile done ---"
 
 .PHONY: all clean fclean re
-.NOTPARALLEL: clean fclean
+.NOTPARALLEL: clean fclean all re
