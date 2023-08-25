@@ -8,6 +8,12 @@
 #include "utils/Logger.hpp"
 #include "server/IRCServer.hpp"
 
+#ifdef __linux__
+# define IRC_NOSIGNAL MSG_NOSIGNAL
+#else
+# define IRC_NOSIGNAL SO_NOSIGPIPE
+#endif
+
 IRCClient::IRCClient(IRCServer *owningServer, int socket_id) : IIRCServerOwned(owningServer), mIsOpen(false), mPfd(),
 															   mNickname(), mUsername(), mSuppliedPassword(),
 															   mQuitReason("Client disconnected") {
@@ -84,7 +90,7 @@ bool IRCClient::flushResponse() {
 		return false;
 	}
 
-	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	ssize_t result = ::send(mSocketFd, mResponseBuffer.data(), mResponseBuffer.size(), MSG_DONTWAIT | IRC_NOSIGNAL);
 	if (result == -1)
 		return false;
 	LOG(BLUE("[OUT] ") << BLUE(mResponseBuffer));
