@@ -1,11 +1,16 @@
 #!/bin/bash
 
+if [ $# -lt 3 ]; then
+    echo "Usage: $0 <ip> <port> <num> [pass]"
+    exit 1
+fi
+
 IP="$1"
 PORT="$2"
 NUM="$3"
 PASS="$4"
 CHANNELS=("channel1" "channel2" "channel3")
-MESSAGES=("Hello" "How are you?" "Testing..." "IRC fun!" "Final message")
+MESSAGES=("I am a bot" "Hello" "Hi" "How are you?" "I am fine" "Bye" "Goodbye" "Goodnight" "Good morning" "Good afternoon" "Good evening")
 
 declare -a SOCKETS=()
 
