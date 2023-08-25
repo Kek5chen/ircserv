@@ -100,8 +100,10 @@ void IRCServer::stop() {
 }
 
 void IRCServer::internalStop() {
-	for (size_t i = 0; i < mClients.size(); i++)
+	for (size_t i = 0; i < mClients.size(); i++) {
+		mChannelManager.partFromAll(mClients[i], mClients[i]->mQuitReason);
 		delete mClients[i];
+	}
 	mClients.clear();
 	if (!mShouldStop && (!mIsBound || !mIsListening))
 		return;
