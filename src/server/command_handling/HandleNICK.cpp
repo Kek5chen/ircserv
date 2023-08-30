@@ -6,7 +6,10 @@ bool IRCServer::handleNICK(IRCClient *client, const IRCCommand &cmd) {
 	IRCCommand updateMsg = client->getResponseBase();
 	bool wasRegistered = client->isRegistered();
 	if (!client->isNicknameFree(newNickname) || newNickname == mBotNick) {
-		client->sendErrorMessage(cmd.mCommand.mName, ERR_NICKNAMEINUSE, newNickname + " :Nickname is already in use");
+		IRCServer::getResponseBase().setCommand(ERR_NICKNAMEINUSE)
+				.addParam(newNickname)
+				.setEnd("Nickname is already in use")
+				.sendTo(client);
 		return true;
 	}
 	client->setNickname(cmd.mParams[0]);
