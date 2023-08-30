@@ -92,6 +92,7 @@ void IRCChannel::send(const IRCCommand &message) {
 }
 
 void IRCChannel::send(IRCClient *sender, const IRCCommand &message) {
+	IRCCommand curMsg = message;
 	for (size_t i = 0; i < mMembers.size(); i++)
 		if (mMembers[i] != sender)
 			message.sendTo(mMembers[i]);
@@ -172,7 +173,7 @@ void IRCChannel::printChannelMode(IRCClient *client) {
 		.addParam(client->getNickname())
 		.addParam(mName)
 		.setEnd("+" + mode)
-		.sendTo(this);
+		.sendTo(client);
 }
 
 bool IRCChannel::checkPermission(IRCClient *client, const std::string &password) {
