@@ -28,6 +28,7 @@ SRC_FILES = main.cpp setup/InitData.cpp \
 			server/command_handling/HandleWHO.cpp \
 			server/command_handling/HandleINVITE.cpp \
 			server/command_handling/HandleTOPIC.cpp \
+			server/command_handling/HandleNOTICE.cpp \
 			utils/nullptr.cpp \
 			server/IIRCServerOwned.cpp \
 			server/BotResponse.cpp \

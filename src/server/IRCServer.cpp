@@ -34,6 +34,7 @@ void IRCServer::initCmdHandlers() {
 	mCmdHandlers["TOPIC"] = &IRCServer::handleTOPIC;
 	mCmdHandlers["MODE"] = &IRCServer::handleMODE;
 	mCmdHandlers["WHO"] = &IRCServer::handleWHO;
+	mCmdHandlers["NOTICE"] = &IRCServer::handleNOTICE;
 	mCmdHandlersInit = true;
 }
 

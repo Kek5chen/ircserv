@@ -52,6 +52,7 @@ private:
 	bool handleINVITE(IRCClient *client, const IRCCommand &cmd);
 	bool handleWHO(IRCClient *client, const IRCCommand &cmd);
 	bool handleTOPIC(IRCClient *client, const IRCCommand &cmd);
+	bool handleNOTICE(IRCClient *client, const IRCCommand &cmd);
 
 	bool botResponse(IRCClient *client, const IRCCommand &cmd);
 
